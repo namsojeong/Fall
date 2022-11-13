@@ -1,3 +1,4 @@
+using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -23,10 +24,15 @@ public class PlayerController : MonoBehaviour
 
     public bool _isGround = false;
 
+    private bool _isMove = false;
+
     public LayerMask _playerLayer;
 
     private Vector3 _moveDir = Vector3.zero;
+    private Vector3 _moveRotDir = Vector3.zero;
     #endregion
+
+    public CinemachineFreeLook vcam;
 
     void Start()
     {
@@ -41,14 +47,10 @@ public class PlayerController : MonoBehaviour
         _moveDir.z = Input.GetAxis("Vertical");
         _moveDir.Normalize();
         CheckGround();
-        if (Input.GetKey(KeyCode.LeftShift))
-        {
-            curSpeed = _runSpeed;
-        }
-        else
-            curSpeed = _walkSpeed;
+
         if (Input.GetButtonDown("Jump")&&_isGround)
         {
+            _playerAnim.SetTrigger("jump");
             _playerRB.drag = 3;
             Vector3 jumpPower = Vector3.up * _jumpHeight;
             _playerRB.AddForce(jumpPower, ForceMode.VelocityChange);
@@ -60,11 +62,26 @@ public class PlayerController : MonoBehaviour
             Vector3 dashPower = transform.forward * (-Mathf.Log(1 / _playerRB.drag)) *_dashLength;
             _playerRB.AddForce(dashPower, ForceMode.VelocityChange);
         }
+
+        if (Input.GetKey(KeyCode.LeftShift) && _isMove)
+        {
+            curSpeed = Mathf.Lerp(curSpeed,_runSpeed,2) ;
+        }
+        else if (_isMove)
+            curSpeed = Mathf.Lerp(curSpeed, _walkSpeed, 2);
+        else
+            curSpeed = Mathf.Lerp(curSpeed,0, 2);
+
+        _playerAnim.SetFloat("speed", curSpeed);
     }
     private void FixedUpdate()
     {
-        if (_moveDir != Vector3.zero)
+        if (_moveDir == Vector3.zero)
+            _isMove = false;
+        else
         {
+            _isMove = true;
+            
             if (Mathf.Sign(transform.forward.x) != Mathf.Sign(_moveDir.x) || Mathf.Sign(transform.forward.z) != Mathf.Sign(_moveDir.z))
                 transform.Rotate(0, 1, 0);
             transform.forward = Vector3.Lerp(transform.forward, _moveDir, Time.deltaTime * _rotateSpeed);
