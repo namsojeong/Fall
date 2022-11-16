@@ -24,18 +24,24 @@ public class PlayerController : MonoBehaviour
     private float rotationSpeed = 8f;
     [SerializeField]
     private bool isRun = false;
+    [SerializeField]
+    private float bulletHitMissDistance = 25f;
 
+    public GameObject bulletPrefab;
+    public Transform barrelTransform;
+    public Transform firePos;
     private Transform camTransform;
 
     public CharacterController controller;
     private PlayerInput input;
     private Vector3 playerVelocity;
     public bool groundedPlayer;
-
+    public GameObject model;
 
     #region InputAction
     private InputAction moveAction;
     public InputAction jumpAction;
+    public InputAction shootAction;
 
     float time = 0f;
 
@@ -48,10 +54,31 @@ public class PlayerController : MonoBehaviour
         camTransform = Camera.main.transform;
         moveAction = input.actions["Move"];
         jumpAction = input.actions["Jump"];
+        shootAction = input.actions["Shoot"];
+    }
+    
+
+    private void ShootGun()
+    {
+        Debug.Log("shoot");
+        RaycastHit hit;
+        GameObject bullet = Instantiate(bulletPrefab, barrelTransform.position, Quaternion.identity, firePos);
+        BulletController bulletController = bullet.GetComponent<BulletController>();
+        if(Physics.Raycast(camTransform.position, camTransform.forward, out hit, Mathf.Infinity))
+        {
+            bulletController.target = hit.point;
+            bulletController.hit = true;
+        }
+        else
+        {
+            bulletController.target = camTransform.position + camTransform.forward * bulletHitMissDistance;
+            bulletController.hit = true;
+        }
     }
 
     void Update()
     {
+        model.transform.position = transform.position;
         playerSpeed = Input.GetKey(KeyCode.LeftShift) ? playerRunSpeed : playerWalkSpeed;
         
         groundedPlayer = controller.isGrounded;
@@ -64,6 +91,10 @@ public class PlayerController : MonoBehaviour
         Vector3 move = new Vector3(input.x,0,input.y);
         move = move.x * camTransform.right.normalized + move.z*camTransform.forward.normalized;
         move.y = 0;
+        if(Input.GetMouseButtonDown(0))
+        {
+            ShootGun();
+        }
 
         if (Input.GetKey(KeyCode.LeftShift) && move != Vector3.zero) { 
             playerSpeed = playerRunSpeed;
@@ -89,7 +120,5 @@ public class PlayerController : MonoBehaviour
 
         Quaternion rotation = Quaternion.Euler(0, camTransform.eulerAngles.y, 0);
         transform.rotation = Quaternion.Lerp(transform.rotation, rotation, rotationSpeed * Time.deltaTime);
-        
-
     }
 }

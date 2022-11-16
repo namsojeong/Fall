@@ -23,7 +23,6 @@ public class PlayerAnimation : MonoBehaviour
     void PlayerMoveAnim()
     {
         float speed = PlayerController.Instance.playerSpeed;
-        Debug.Log(speed);
         animator.SetFloat("speed", speed);
     }
     void PlayerJumpAnim()
