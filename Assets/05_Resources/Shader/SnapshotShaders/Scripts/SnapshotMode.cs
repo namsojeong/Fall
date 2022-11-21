@@ -6,6 +6,14 @@ using UnityEngine;
 [RequireComponent(typeof(Camera))]
 public class SnapshotMode : MonoBehaviour
 {
+    //[SerializeField]
+    //private bool useCanvas = false;
+
+    //[SerializeField]
+    //private SnapshotCanvas snapshotCanvasPrefab;
+
+    //private SnapshotCanvas snapshotCanvas;
+
     private Shader noneShader;
     private Shader greyscaleShader;
     private Shader sepiaShader;
@@ -24,7 +32,7 @@ public class SnapshotMode : MonoBehaviour
 
     private List<SnapshotFilter> filters = new List<SnapshotFilter>();
 
-    private int filterIndex = 7;
+    private int filterIndex = 0;
 
     private void Awake()
     {
@@ -76,11 +84,13 @@ public class SnapshotMode : MonoBehaviour
         //// Logic to swap between filters.
         if (Input.GetMouseButtonDown(0))
         {
-            filterIndex = 6;
+            if (filterIndex <= 0) filterIndex = 14;
+            else filterIndex--;
         }
         else if (Input.GetMouseButtonDown(1))
         {
-            filterIndex = 7;
+            if (filterIndex >= 14) filterIndex = 0;
+            else filterIndex++;
         }
 
     }
