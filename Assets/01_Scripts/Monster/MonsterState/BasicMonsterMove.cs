@@ -21,16 +21,9 @@ public class BasicMonsterMove : BaseState
 
     #region MOVE
 
-    private void Move()
-    {
-        if (target == null) return;
-        monster.LookTarget(target);
-        monster.agent.SetDestination(target.position);
-    }
-
     private void SetMove(bool isMove)
     {
-        monster.agent.isStopped = !isMove;
+        //monster.agent.isStopped = !isMove;
     }
 
     #endregion
@@ -40,7 +33,7 @@ public class BasicMonsterMove : BaseState
     public override void SetAnim(bool isPlay)
     {
         base.SetAnim();
-        monster.MoveAnimation(isPlay);
+        //monster.MoveAnimation(isPlay);
     }
 
     #endregion
@@ -71,9 +64,8 @@ public class BasicMonsterMove : BaseState
     public override void UpdateLogic()
     {
         base.UpdateLogic();
-        target = monster.SerachTarget();
+        //target = monster.SerachTarget();
 
-        Move();
     }
 
     // 상태 끝났을 시

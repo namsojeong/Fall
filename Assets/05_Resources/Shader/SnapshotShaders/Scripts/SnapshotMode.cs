@@ -84,13 +84,11 @@ public class SnapshotMode : MonoBehaviour
         //// Logic to swap between filters.
         if (Input.GetMouseButtonDown(0))
         {
-            if (filterIndex <= 0) filterIndex = 14;
-            else filterIndex--;
+            filterIndex = 7;
         }
         else if (Input.GetMouseButtonDown(1))
         {
-            if (filterIndex >= 14) filterIndex = 0;
-            else filterIndex++;
+            filterIndex = 8;
         }
 
     }

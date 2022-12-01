@@ -24,10 +24,6 @@ public class BasicMonsterIdle : BaseState
         base.CheckDistance();
         if (target == null) return;
 
-        if (monster.distance <= monster.moveRange)
-        {
-            stateMachine.ChangeState(monster.moveState);
-        }
     }
 
     // 상태 시작 시
@@ -42,7 +38,7 @@ public class BasicMonsterIdle : BaseState
     public override void UpdateLogic()
     {
         base.UpdateLogic();
-        target = monster.SerachTarget();
+        //target = monster.SerachTarget();
     }
 
     // 상태 끝났을 시
