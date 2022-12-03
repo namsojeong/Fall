@@ -1,31 +1,40 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
+using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.AI;
 
-public class MonsterWalkState : StateMachineBehaviour
+public class MonsterIdleState : StateMachineBehaviour
 {
     BombMonster monster;
 
-    private void Move()
-    {
-        monster.agent.SetDestination(monster.targetPos.position);
-    }
+    const float moveRange = 10.0f;
 
 
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
+        monster = animator.GetComponent<BombMonster>();
 
+        Debug.Log("IDLE");
     }
 
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        Move();
+        // 상태 조건 체크
+        if (monster.distance <= Define.MONSTER_ATTACK_RANGE)
+        {
+            monster.ChangeState(MonsterState.ATTACK, true);
+        }
+        else
+        {
+            monster.ChangeState(MonsterState.WALK, true);
+        }
+
     }
 
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
+        
     }
 
     // OnStateMove is called right after Animator.OnAnimatorMove()

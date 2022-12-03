@@ -1,7 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.InputSystem.XR.Haptics;
 
 public enum MonsterState
 {
@@ -12,9 +14,7 @@ public enum MonsterState
 }
 public class BombMonster : MonoBehaviour
 {
-
     private Transform target = null; // 타겟
-
 
     // Component
     [HideInInspector]
@@ -23,11 +23,6 @@ public class BombMonster : MonoBehaviour
     public Animator anim;
     [HideInInspector]
     public Rigidbody rigid;
-
-    // 필요 변수 => 나중에 SO로 뽑을 예정
-    private float walkingSpeed = Define.MONSTER_SPEED;
-    private float colRadius = Define.MONSTER_SERCH_RANGE; // 
-    public float moveRange = Define.MONSTER_MOVE_RANGE;
 
     public LayerMask targetLayerMask;
 
@@ -40,11 +35,33 @@ public class BombMonster : MonoBehaviour
         ResetMonster();
     }
 
+    #region HP
+
+    private const int MAXHP = 2;
+    private int curHp = MAXHP;
+    public int GetHP => curHp;
+    public void SetHP(int damage) 
+    {
+        curHp -= damage;
+        if (curHp <= 0) 
+        {
+            Die();
+        }
+    }
+
+    private void Die()
+    {
+
+    }
+
+    #endregion
+
     #region SET
 
     public void ResetMonster()
     {
-        agent.speed = walkingSpeed;
+        agent.speed = Define.MONSTER_SPEED;
+        agent.stoppingDistance = 5f;
     }
 
     #endregion
@@ -55,7 +72,10 @@ public class BombMonster : MonoBehaviour
     public Transform targetPos => target.transform; // 타겟과의 거리
 
     // 타겟과의 거리 구하기
-    private float GetDistance() { return Vector3.Distance(target.transform.position, transform.position); }
+    private float GetDistance() {
+        SerachTarget();
+        return Vector3.Distance(target.transform.position, transform.position); 
+    }
 
     // 타겟과의 방향 구하기
     private Vector3 GetDirection()
@@ -72,7 +92,7 @@ public class BombMonster : MonoBehaviour
     // 타겟 구하기
     public Transform SerachTarget()
     {
-        Collider[] cols = Physics.OverlapSphere(transform.position, colRadius, targetLayerMask);
+        Collider[] cols = Physics.OverlapSphere(transform.position, Define.MONSTER_SERCH_RANGE, targetLayerMask);
         if (cols.Length > 0)
         {
             target = cols[0].gameObject.transform;
@@ -94,28 +114,47 @@ public class BombMonster : MonoBehaviour
     // 애니메이션 Hash
     [HideInInspector]
     public int hashWalk = Animator.StringToHash("Walk");
+    [HideInInspector]
     public int hashAttack = Animator.StringToHash("Attack");
+    [HideInInspector]
     public int hashDamage = Animator.StringToHash("Damage");
-
 
     // 이동 애니메이션
     public void ChangeState(MonsterState state, bool isOn)
     {
-        switch(state)
+        switch (state)
         {
             case MonsterState.IDLE:
+                {
+                    anim.SetBool(hashWalk, false);
+                    anim.SetBool(hashAttack, false);
+                    anim.SetBool(hashDamage, false);
+                }
                 break;
             case MonsterState.WALK:
-        anim.SetBool(hashWalk, isOn);
+                {
+                    anim.SetBool(hashWalk, isOn);
+                }
                 break;
             case MonsterState.ATTACK:
-        anim.SetBool(hashAttack, isOn);
+                {
+                    anim.SetBool(hashAttack, isOn);
+                }
                 break;
             case MonsterState.DAMAGE:
-        anim.SetBool(hashDamage, isOn);
+                {
+                    anim.SetBool(hashDamage, isOn);
+                }
                 break;
         }
     }
 
     #endregion
+
+    public void Bomb()
+    {
+        agent.enabled = false;
+        ChangeState(MonsterState.ATTACK, true);
+    }
+
 }

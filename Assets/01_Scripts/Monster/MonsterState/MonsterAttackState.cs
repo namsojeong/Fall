@@ -1,33 +1,47 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
-using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UIElements;
 
-public class MonsterIdleState : StateMachineBehaviour
+public class MonsterAttackState : StateMachineBehaviour
 {
     BombMonster monster;
 
-    float moveRange = 10.0f;
+    float delayTIme = 3.0f;
+
+    private void Bomb()
+    {
+        monster.agent.enabled = false;
+    }
 
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        
+        monster = animator.GetComponent<BombMonster>();
+        Debug.Log("ATTACK"); 
+        Bomb();
     }
 
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        // 상태 조건 체크
-        if (monster.distance<= moveRange)
-        {
-            monster.ChangeState(MonsterState.WALK, true);
-        }
 
     }
 
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        
+        CheckTargetDamage();
+    }
+
+    private void CheckTargetDamage()
+    {
+        Collider[] cols = Physics.OverlapSphere(monster.transform.position, Define.MONSTER_ATTACK_DAMAGE_RANGE, monster.targetLayerMask);
+        for(int i=0;i<cols.Length;i++)
+        {
+            Debug.Log("Bomb");
+            //cols[i].GetComponent<Player>()?.Bomb();
+            //cols[i].GetComponent<Turret>()?.Damage();
+        }
+        monster.gameObject.SetActive(false);
     }
 
     // OnStateMove is called right after Animator.OnAnimatorMove()
