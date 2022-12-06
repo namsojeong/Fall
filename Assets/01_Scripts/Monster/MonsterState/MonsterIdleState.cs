@@ -14,8 +14,6 @@ public class MonsterIdleState : StateMachineBehaviour
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         monster = animator.GetComponent<BombMonster>();
-
-        Debug.Log("IDLE");
     }
 
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)

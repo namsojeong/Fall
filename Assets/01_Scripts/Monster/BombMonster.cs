@@ -40,10 +40,10 @@ public class BombMonster : MonoBehaviour
     private const int MAXHP = 2;
     private int curHp = MAXHP;
     public int GetHP => curHp;
-    public void SetHP(int damage) 
+    public void SetHP(int damage)
     {
         curHp -= damage;
-        if (curHp <= 0) 
+        if (curHp <= 0)
         {
             Die();
         }
@@ -72,9 +72,10 @@ public class BombMonster : MonoBehaviour
     public Transform targetPos => target.transform; // 타겟과의 거리
 
     // 타겟과의 거리 구하기
-    private float GetDistance() {
+    private float GetDistance()
+    {
         SerachTarget();
-        return Vector3.Distance(target.transform.position, transform.position); 
+        return Vector3.Distance(target.transform.position, transform.position);
     }
 
     // 타겟과의 방향 구하기
@@ -150,6 +151,8 @@ public class BombMonster : MonoBehaviour
     }
 
     #endregion
+
+    private float bombPower =20.0f;
 
     public void Bomb()
     {
