@@ -27,7 +27,7 @@ public class MonsterAttackState : StateMachineBehaviour
         if (cols[0] != null)
         {
             Debug.Log("Bomb");
-            //cols[0].gameObject.GetComponent<Rigidbody>().AddForce(Vector3.up * bombPower * Time.deltaTime);
+            cols[0].gameObject.GetComponent<CharacterController>().Move(Vector3.up * bombPower * Time.deltaTime);
         }
     }
 
@@ -36,7 +36,7 @@ public class MonsterAttackState : StateMachineBehaviour
         CheckTargetDamage();
     }
 
-    float bombPower = 10.0f;
+    float bombPower = 20.0f;
     private void CheckTargetDamage()
     {
         monster.gameObject.SetActive(false);
