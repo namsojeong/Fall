@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -37,7 +38,7 @@ public class PlayerController : MonoBehaviour
     private Vector3 playerVelocity;
     public bool groundedPlayer;
     public GameObject model;
-
+    public bool _isBoss = false;
     #region InputAction
     private InputAction moveAction;
     public InputAction jumpAction;
@@ -57,8 +58,9 @@ public class PlayerController : MonoBehaviour
         shootAction = input.actions["Shoot"];
     }
     
+    
 
-    private void ShootGun()
+    private void ShootGunBoss()
     {
         Debug.Log("shoot");
         RaycastHit hit;
@@ -93,7 +95,7 @@ public class PlayerController : MonoBehaviour
         move.y = 0;
         if(Input.GetMouseButtonDown(0))
         {
-            ShootGun();
+            ShootGunBoss();
         }
 
         if (Input.GetKey(KeyCode.LeftShift) && move != Vector3.zero) { 
@@ -121,4 +123,5 @@ public class PlayerController : MonoBehaviour
         Quaternion rotation = Quaternion.Euler(0, camTransform.eulerAngles.y, 0);
         transform.rotation = Quaternion.Lerp(transform.rotation, rotation, rotationSpeed * Time.deltaTime);
     }
+
 }

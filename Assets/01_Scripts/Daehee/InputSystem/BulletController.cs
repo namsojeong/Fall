@@ -21,16 +21,13 @@ public class BulletController : MonoBehaviour
     private void Update()
     {
         transform.position = Vector3.MoveTowards(transform.position,target, speed* Time.deltaTime);
-        if(!hit&&Vector3.Distance(transform.position,target) < 0.01f)
-        {
-            Destroy(gameObject);
-        }
     }
 
     private void OnCollisionEnter(Collision collision)
     {
         ContactPoint contact = collision.GetContact(0);
-        GameObject.Instantiate(bulletDecal, contact.point, Quaternion.LookRotation(contact.normal));
+        Debug.Log(contact.thisCollider.gameObject);
+       // GameObject.Instantiate(bulletDecal, contact.point, Quaternion.LookRotation(contact.normal));
         Destroy(gameObject);
     }
 }
