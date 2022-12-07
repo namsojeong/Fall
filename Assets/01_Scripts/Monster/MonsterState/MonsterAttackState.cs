@@ -23,7 +23,12 @@ public class MonsterAttackState : StateMachineBehaviour
 
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-
+        Collider[] cols = Physics.OverlapSphere(monster.transform.position, Define.MONSTER_ATTACK_DAMAGE_RANGE, monster.targetLayerMask);
+        if (cols[0] != null)
+        {
+            Debug.Log("Bomb");
+            //cols[0].gameObject.GetComponent<Rigidbody>().AddForce(Vector3.up * bombPower * Time.deltaTime);
+        }
     }
 
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
@@ -31,14 +36,9 @@ public class MonsterAttackState : StateMachineBehaviour
         CheckTargetDamage();
     }
 
-    float bombPower = 20.0f;
+    float bombPower = 10.0f;
     private void CheckTargetDamage()
     {
-        Collider[] cols = Physics.OverlapSphere(monster.transform.position, Define.MONSTER_ATTACK_DAMAGE_RANGE, monster.targetLayerMask);
-        if (cols[0] != null)
-        {
-            cols[0].gameObject.GetComponent<Rigidbody>().AddForce(Vector3.up * bombPower);
-        }
         monster.gameObject.SetActive(false);
     }
 
