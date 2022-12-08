@@ -21,6 +21,7 @@ public class SwitchCinemachine : MonoBehaviour
     private InputAction aimAction;
     void Awake()
     {
+        
         vCam = GetComponent<CinemachineVirtualCamera>();
         aimAction = input.actions["Aim"];
     }

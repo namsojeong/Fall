@@ -18,6 +18,12 @@ public class PlayerAnimation : MonoBehaviour
     {
         PlayerMoveAnim();
         PlayerJumpAnim();
+        PlayerShotAnim();
+    }
+
+    void PlayerShotAnim()
+    {
+        animator.SetTrigger("shot");
     }
 
     void PlayerMoveAnim()

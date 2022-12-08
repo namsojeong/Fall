@@ -26,7 +26,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private bool isRun = false;
     [SerializeField]
-    private float bulletHitMissDistance = 25f;
+    private float bulletHitMissDistance = 2500f;
 
     public GameObject bulletPrefab;
     public Transform barrelTransform;
@@ -73,8 +73,9 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            bulletController.target = camTransform.position + camTransform.forward * bulletHitMissDistance;
-            bulletController.hit = true;
+            bulletController.target = camTransform.position + camTransform.forward*1000;
+            Debug.Log(bulletController.target);
+            bulletController.hit = false;
         }
     }
 
@@ -98,7 +99,8 @@ public class PlayerController : MonoBehaviour
             ShootGunBoss();
         }
 
-        if (Input.GetKey(KeyCode.LeftShift) && move != Vector3.zero) { 
+        if (Input.GetKey(KeyCode.LeftShift) && move != Vector3.zero) 
+        {
             playerSpeed = playerRunSpeed;
         }
         else if (move != Vector3.zero)
