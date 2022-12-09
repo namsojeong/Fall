@@ -26,28 +26,19 @@ public class BombMonster : MonoBehaviour
 
     public LayerMask targetLayerMask;
 
+    CharacterHP monsterHP;
+
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
         anim = GetComponent<Animator>();
         rigid = GetComponent<Rigidbody>();
+        monsterHP = GetComponent<CharacterHP>();
 
         ResetMonster();
     }
 
     #region HP
-
-    private const int MAXHP = 2;
-    private int curHp = MAXHP;
-    public int GetHP => curHp;
-    public void SetHP(int damage)
-    {
-        curHp -= damage;
-        if (curHp <= 0)
-        {
-            Die();
-        }
-    }
 
     private void Die()
     {

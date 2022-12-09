@@ -1,37 +1,39 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
+using UnityEngine.InputSystem.HID;
 
 public class Laser : MonoBehaviour
 {
-    float dis;
-    LineRenderer line;
-    GameObject hitParticle;
+    public GameObject hitParticle;
+    public GameObject startPos;
+    public GameObject player;
+    private LineRenderer line;
+    private  RaycastHit hit;
+    private  Vector3 endPos = Vector3.zero;
 
     private void Awake()
     {
         line = GetComponent<LineRenderer>();
-    }
 
+    }
     private void Update()
     {
-        RaycastHit hit;
-        if(Physics.Raycast(transform.position, transform.forward, out hit))
-        {
-            Vector3 hitPoint = hit.point;
-
-            Debug.DrawLine(transform.position, transform.forward*hit.distance, Color.red);
-
-            line.SetPosition(0, transform.position);
-            line.SetPosition(1, hit.point);
-
-            hitParticle.transform.position = hitPoint;
-            hitParticle.transform.rotation = Quaternion.LookRotation(hit.normal);
-            hitParticle.SetActive(true);
-        }
-        else
-        {
-            Debug.DrawRay(transform.position, transform.forward, Color.blue);
-        }
+        line.SetPosition(0, startPos.transform.position);
+        Physics.Raycast(startPos.transform.position, transform.forward, out hit);
+        endPos = Vector3.Lerp(endPos, player.transform.position, Time.deltaTime);
+        line.SetPosition(1, endPos);
+        LaserEffect();
     }
+
+    private void LaserEffect()
+    {
+        hitParticle.transform.position = endPos;
+        hitParticle.transform.rotation = Quaternion.LookRotation(hit.normal);
+        hitParticle.SetActive(true);
+    }
+
+
+
 }
