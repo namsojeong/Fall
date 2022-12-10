@@ -29,7 +29,7 @@ public class PlayerDefaultController : MonoBehaviour
         Vector2 input = moveAction.ReadValue<Vector2>();
         Vector3 move = new Vector3(input.x, 0, input.y);
         move.y = 0;
-        controller.Move(move.normalized * Time.deltaTime * 10f);
+        controller.Move(move.normalized * (Time.deltaTime * 10f));
 
         playerPos = Camera.main.WorldToScreenPoint(transform.position);
         radLook = Mathf.Atan2(Input.mousePosition.y - playerPos.y, Input.mousePosition.x - playerPos.x);
@@ -43,7 +43,6 @@ public class PlayerDefaultController : MonoBehaviour
     }
     private void ShootGunBoss()
     {
-        Debug.Log("shoot");
         RaycastHit hit;
         GameObject bullet = Instantiate(bulletPrefab, transform.position,Quaternion.identity);
         BulletController bulletController = bullet.GetComponent<BulletController>();
@@ -57,5 +56,7 @@ public class PlayerDefaultController : MonoBehaviour
             bulletController.target = transform.position + transform.forward * 1000;
             bulletController.hit = false;
         }
+        
+        Debug.Log("Shot!!");
     }
 }
