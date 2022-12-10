@@ -10,7 +10,7 @@ public class MonsterAttackState : StateMachineBehaviour
 
     float delayTime = 1.5f;
     float curTime = 0.0f;
-    float bombPower = 20.0f;
+    float bombPower = 50.0f;
 
 
     private void Bomb()
@@ -33,7 +33,7 @@ public class MonsterAttackState : StateMachineBehaviour
             Collider[] cols = Physics.OverlapSphere(monster.transform.position, Define.MONSTER_ATTACK_DAMAGE_RANGE, monster.targetLayerMask);
             if (cols[0] != null)
             {
-                cols[0].gameObject.GetComponent<CharacterController>().Move(Vector3.up * bombPower * Time.deltaTime);
+                cols[0].gameObject.GetComponent<PlayerController>()?.Bomb();
             }
         }
         

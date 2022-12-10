@@ -5,8 +5,14 @@ using UnityEngine;
 public class CharacterHP : MonoBehaviour
 {
     private int curhp;
-    private readonly int max_hp;
-    private bool IsDead => curhp <= 0;
+    public readonly int max_hp = 100;
+    public bool IsDead => curhp <= 0;
+    public float HP => curhp;
+
+    private void Awake()
+    {
+        curhp = max_hp;
+    }
 
     public void Hit(int damage)
     {
