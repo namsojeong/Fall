@@ -46,6 +46,7 @@ public class PlayerController : MonoBehaviour
     #endregion
 
     private bool isBomb = false;
+    public float bombPower = 20.0f;
 
     #region HP
 
@@ -109,6 +110,10 @@ public class PlayerController : MonoBehaviour
         {
             playerVelocity.y += Mathf.Sqrt(jumpHeight * -3.0f * gravityValue);
         }
+        if(isBomb)
+        {
+         //   playerVelocity.y = bombPower;
+        }
 
         playerVelocity.y += gravityValue * Time.deltaTime;
 
@@ -121,10 +126,6 @@ public class PlayerController : MonoBehaviour
 
         HPSlide();
 
-        if(Input.GetKeyDown(KeyCode.V))
-        {
-            Hit();
-        }
         if(Input.GetKeyDown(KeyCode.R))
         {
             playerHP.ReviveHP();
@@ -157,18 +158,12 @@ public class PlayerController : MonoBehaviour
 
     public void Bomb()
     {
-        if (isBomb) return;
         isBomb = true;
         Hit();
-        StartCoroutine(BombPower());
+        playerVelocity.y = bombPower;
+        Debug.Log("Bomb");
     }
 
-    private IEnumerator BombPower()
-    {
-        playerVelocity.y += Mathf.Sqrt(5f * -3.0f * gravityValue);
-        yield return new WaitForSeconds(0.3f);
-        isBomb = false;
-    }
 
     #endregion
 
