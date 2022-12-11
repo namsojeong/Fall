@@ -10,6 +10,7 @@ public class GameManager : MonoBehaviour
     public bool IsBoss
     {
         get { return isBoss; }
+        set { isBoss = value; }
     }
 
     private void Awake()
