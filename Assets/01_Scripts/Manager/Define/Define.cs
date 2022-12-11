@@ -23,4 +23,10 @@ public class Define
     public const float MONSTER_ATTACK_DAMAGE_RANGE = 25.0f;
 
     #endregion
+
+    #region EVENT_MANAGER
+
+    public const int END_GAME = 0;
+
+    #endregion
 }

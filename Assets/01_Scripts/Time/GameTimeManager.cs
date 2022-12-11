@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GameTimeManager : MonoSingleton<GameTimeManager>
@@ -9,6 +10,7 @@ public class GameTimeManager : MonoSingleton<GameTimeManager>
 
     private float curTime = Define.GAME_TIME;
     private bool isStoppedTime = false;
+
 
     public void ResetGameTime()
     {
@@ -30,12 +32,21 @@ public class GameTimeManager : MonoSingleton<GameTimeManager>
         if (!isStoppedTime)
         {
             curTime -= Time.deltaTime;
+            if(curTime <= 0)
+            {
+                EndTime();
+            }
             TimeUI();
         }
     }
     private void TimeUI()
     {
         timeText.text = string.Format($"{(int)curTime / 60}:{(int)curTime % 60}");
+    }
+
+    private void EndTime()
+    {
+        UiManager.Instance.ChangeScene("GameOver");
     }
 
 }
