@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
+using Mono.Cecil;
 
 [RequireComponent(typeof(CharacterController), typeof(PlayerInput))]
 public class PlayerController : MonoBehaviour
@@ -46,7 +47,6 @@ public class PlayerController : MonoBehaviour
     #endregion
 
     private bool isBomb = false;
-    public float bombPower = 20.0f;
 
     #region HP
 
@@ -137,7 +137,8 @@ public class PlayerController : MonoBehaviour
     {
         Debug.Log("shoot");
         RaycastHit hit;
-        GameObject bullet = Instantiate(bulletPrefab, barrelTransform.position, Quaternion.identity, firePos);
+        GameObject bullet = ObjectPool.Instance.GetObject(PoolObjectType.BULLET);
+        SetBullet(bullet);
         BulletController bulletController = bullet.GetComponent<BulletController>();
         if(Physics.Raycast(camTransform.position, camTransform.forward, out hit, Mathf.Infinity))
         {
@@ -151,15 +152,21 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void SetBullet(GameObject bullet)
+    {
+        bullet.transform.position = barrelTransform.position;
+        bullet.transform.rotation = Quaternion.identity;
+    }
+
     #endregion
 
 
     #region Bomb
 
-    public void Bomb()
+    public void Bomb(int damage, float bombPower)
     {
         isBomb = true;
-        Hit();
+        Hit(damage);
         playerVelocity.y = bombPower;
         Debug.Log("Bomb");
     }
@@ -176,9 +183,9 @@ public class PlayerController : MonoBehaviour
     }
 
 
-    public void Hit()
+    public void Hit(int damage)
     {
-        playerHP.Hit(10);
+        playerHP.Hit(damage);
         if (playerHP.IsDead)
         {
             UiManager.Instance.ChangeScene("GameOver");

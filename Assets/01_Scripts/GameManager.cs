@@ -4,9 +4,12 @@ using UnityEngine;
 
 public class GameManager : MonoSingleton<GameManager>
 {
+
     private void Awake()
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
+
+
 }

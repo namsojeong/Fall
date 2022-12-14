@@ -3,157 +3,11 @@ using MonsterLove.StateMachine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.InputSystem.XR.Haptics;
-using UnityEngine.TextCore.Text;
 
-//public enum MonsterState
-//{
-//    IDLE,
-//    WALK,
-//    ATTACK,
-//    DAMAGE
-//}
 public class BombMonster : MonoBehaviour
 {
-    //private Transform target = null; // 타겟
-
-    //// Component
-    //[HideInInspector]
-    //public NavMeshAgent agent;
-    //[HideInInspector]
-    //public Animator anim;
-    //[HideInInspector]
-    //public Rigidbody rigid;
-
-    //public LayerMask targetLayerMask;
-
-    //CharacterHP monsterHP;
-
-    //private void Awake()
-    //{
-    //    agent = GetComponent<NavMeshAgent>();
-    //    anim = GetComponent<Animator>();
-    //    rigid = GetComponent<Rigidbody>();
-    //    monsterHP = GetComponent<CharacterHP>();
-
-    //    ResetMonster();
-    //}
-
-    //#region HP
-
-    //private void Die()
-    //{
-
-    //}
-
-    //#endregion
-
-    //#region SET
-
-    //public void ResetMonster()
-    //{
-    //    agent.speed = Define.MONSTER_SPEED;
-    //    agent.stoppingDistance = 5f;
-    //}
-
-    //#endregion
-
-    //#region GET
-    //public float distance => GetDistance(); // 타겟과의 거리
-    //public Vector3 dir => GetDirection(); // 타겟과의 거리
-    //public Transform targetPos => target.transform; // 타겟과의 거리
-
-    //// 타겟과의 거리 구하기
-    //private float GetDistance()
-    //{
-    //    SerachTarget();
-    //    return Vector3.Distance(target.transform.position, transform.position);
-    //}
-
-    //// 타겟과의 방향 구하기
-    //private Vector3 GetDirection()
-    //{
-    //    Vector3 dir = target.position - transform.position;
-    //    dir.y = 0;
-    //    return dir;
-    //}
-
-    //#endregion
-
-    //#region TARGET
-
-    //// 타겟 구하기
-    //public Transform SerachTarget()
-    //{
-    //    Collider[] cols = Physics.OverlapSphere(transform.position, Define.MONSTER_SERCH_RANGE, targetLayerMask);
-    //    if (cols.Length > 0)
-    //    {
-    //        target = cols[0].gameObject.transform;
-    //        return target;
-    //    }
-    //    else return null;
-    //}
-    //// 타겟 쳐다보기
-    //public void LookTarget(Transform target)
-    //{
-    //    Vector3 dir = GetDirection();
-    //    Quaternion rot = Quaternion.LookRotation(dir.normalized);
-    //    transform.rotation = rot;
-    //}
-    //#endregion
-
-    //#region ANIMATION
-
-    //// 애니메이션 Hash
-    //[HideInInspector]
-    //public int hashWalk = Animator.StringToHash("Walk");
-    //[HideInInspector]
-    //public int hashAttack = Animator.StringToHash("Attack");
-    //[HideInInspector]
-    //public int hashDamage = Animator.StringToHash("Damage");
-
-    //// 이동 애니메이션
-    //public void ChangeState(MonsterState state, bool isOn)
-    //{
-    //    switch (state)
-    //    {
-    //        case MonsterState.IDLE:
-    //            {
-    //                anim.SetBool(hashWalk, false);
-    //                anim.SetBool(hashAttack, false);
-    //                anim.SetBool(hashDamage, false);
-    //            }
-    //            break;
-    //        case MonsterState.WALK:
-    //            {
-    //                anim.SetBool(hashWalk, isOn);
-    //            }
-    //            break;
-    //        case MonsterState.ATTACK:
-    //            {
-    //                anim.SetBool(hashAttack, isOn);
-    //            }
-    //            break;
-    //        case MonsterState.DAMAGE:
-    //            {
-    //                anim.SetBool(hashDamage, isOn);
-    //            }
-    //            break;
-    //    }
-    //}
-
-    //#endregion
-
-    //private float bombPower =20.0f;
-
-    //public void Bomb()
-    //{
-    //    agent.enabled = false;
-    //    ChangeState(MonsterState.ATTACK, true);
-    //}
 
     public enum States
     {
@@ -179,11 +33,11 @@ public class BombMonster : MonoBehaviour
 
     private float moveSpeed = 5.0f;
     private float moveRange = 50.0f;
-    private float attackRange = 13.0f;
+    private float attackRange = 5.0f;
     private float colRadius = 100f;
     private int attackPower = 20;
-    private float bombPower = 50.0f;
-    private float height = 50.0f;
+    private float bombPower = 20.0f;
+
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
@@ -192,12 +46,18 @@ public class BombMonster : MonoBehaviour
 
         target = SearchTarget();
         fsm = StateMachine<States>.Initialize(this, States.Idle);
+    }
 
+    private void OnEnable()
+    {
         ResetMonster();
     }
 
     private void ResetMonster()
     {
+        agent.speed = moveSpeed;
+        agent.stoppingDistance = attackRange;
+        fsm.ChangeState(States.Idle);
     }
 
     #region GET
@@ -343,10 +203,10 @@ public class BombMonster : MonoBehaviour
 
     public void Attack()
     {
-        Collider[] cols = Physics.OverlapSphere(transform.position, Define.MONSTER_ATTACK_DAMAGE_RANGE, targetLayerMask);
+        Collider[] cols = Physics.OverlapSphere(transform.position, attackRange, targetLayerMask);
         if (cols.Length>0)
         {
-            cols[0].gameObject.GetComponent<PlayerController>().Bomb();
+            cols[0].gameObject.GetComponent<PlayerController>().Bomb(attackPower, bombPower);
         }
     }
 
@@ -362,7 +222,7 @@ public class BombMonster : MonoBehaviour
 
     private void MonsterDie()
     {
-        gameObject.SetActive(false);
+        ObjectPool.Instance.ReturnObject(PoolObjectType.BOMB_MONSTER, gameObject);
     }
 
     #endregion
