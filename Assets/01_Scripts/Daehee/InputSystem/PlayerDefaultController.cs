@@ -8,7 +8,6 @@ public class PlayerDefaultController : MonoBehaviour
 {
     public CharacterController controller;
     private PlayerInput input;
-    private Rigidbody _playerRigid;
     
     [SerializeField]
     private float gravityValue = -9.81f;
@@ -31,7 +30,6 @@ public class PlayerDefaultController : MonoBehaviour
         input = GetComponent<PlayerInput>();
         moveAction = input.actions["Move"];
         jumpAction = input.actions["Jump"];
-        _playerRigid = GameObject.Find("Player 1").GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
@@ -57,7 +55,8 @@ public class PlayerDefaultController : MonoBehaviour
         {
             playerVelocity.y += Mathf.Sqrt(jumpHeight * -1.0f * gravityValue);
         }
-        _playerRigid.velocity = playerVelocity;
+
+
         controller.Move(playerVelocity * Time.deltaTime);
     }
 
