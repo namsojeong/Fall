@@ -12,9 +12,4 @@ public class GameManager : MonoSingleton<GameManager>
         set { isBoss = value; }
     }
 
-    private void Awake()
-    {
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-    }
 }

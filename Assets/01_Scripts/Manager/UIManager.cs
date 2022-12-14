@@ -18,6 +18,16 @@ public class UiManager : MonoSingleton<UiManager>
 
     public void ChangeScene(string scene)
     {
+        if(scene=="DefaultGameScene")
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
         SceneManager.LoadScene(scene);
     }
 

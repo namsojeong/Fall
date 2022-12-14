@@ -26,8 +26,8 @@ public class BulletController : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         ContactPoint contact = collision.GetContact(0);
-        ObjectPool.Instance.ReturnObject(PoolObjectType.BULLET, gameObject);
         StopCoroutine(DeleteBullet());
+        ObjectPool.Instance.ReturnObject(PoolObjectType.BULLET, gameObject);
     }
 
     private IEnumerator DeleteBullet()
