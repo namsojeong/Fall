@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 
 namespace WaterRippleForScreens {
 
@@ -11,6 +12,7 @@ public class UIManager : MonoBehaviour {
     public GameObject targetPositionItemPf; //Position list prefab
 
     //UI variables
+    
     public Toggle detectClickToggle;
     public Toggle timeInfinityToggle;
     public InputField waveTimeInputField;
@@ -52,6 +54,7 @@ public class UIManager : MonoBehaviour {
             Destroy(this.gameObject);
         }
 
+        
         positionList = new List<GameObject>(); //Init list
 
         positionListParentRT = positionListParent.GetComponent<RectTransform>(); //Get rect transform reference
@@ -79,6 +82,8 @@ public class UIManager : MonoBehaviour {
         waveCountText.text = "Wave Count: " + waveCountSlider.value.ToString("f5");
     }
 
+
+    
     public void OnValueChangeDetectClick() {
         rippleCameraEffect.detectClick = detectClickToggle.isOn;
     }
