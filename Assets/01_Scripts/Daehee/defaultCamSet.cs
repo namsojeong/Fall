@@ -13,7 +13,7 @@ public class defaultCamSet : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.position = _playerTransform.position + new Vector3(0, 15, 6);
+        transform.position = _playerTransform.position + new Vector3(0, 15, -6);
         transform.LookAt(_playerTransform);
     }
 }
