@@ -2,31 +2,29 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.InputSystem;
+using Mono.Cecil;
 
 [RequireComponent(typeof(CharacterController), typeof(PlayerInput))]
 public class PlayerController : MonoBehaviour
 {
     public static PlayerController Instance { get; private set; }
     private void Awake() => Instance = this;
-    public float playerSpeed = 0f;
 
-    [SerializeField]
-    private float playerWalkSpeed = 10.0f;
-    [SerializeField]
-    private float playerRunSpeed = 20.0f;
-    [SerializeField]
-    private float playerStopSpeed = 0.0f;
-    [SerializeField]
-    private float jumpHeight = 1.0f;
-    [SerializeField]
-    private float gravityValue = -9.81f;
-    [SerializeField]
-    private float rotationSpeed = 8f;
-    [SerializeField]
-    private bool isRun = false;
-    [SerializeField]
-    private float bulletHitMissDistance = 2500f;
+    private float playerSpeed = 0f;
+    public float GetPlayerSpeed => playerSpeed;
+
+    #region WALK_BULLET
+
+    [SerializeField] private float playerWalkSpeed = 10.0f;
+    [SerializeField] private float playerRunSpeed = 20.0f;
+    [SerializeField] private float playerStopSpeed = 0.0f;
+    [SerializeField] private float jumpHeight = 1.0f;
+    [SerializeField] private float gravityValue = -9.81f;
+    [SerializeField] private float rotationSpeed = 8f;
+    [SerializeField] private bool isRun = false;
+    [SerializeField] private float bulletHitMissDistance = 25f;
 
     public GameObject bulletPrefab;
     public Transform barrelTransform;
@@ -48,18 +46,30 @@ public class PlayerController : MonoBehaviour
 
     #endregion
 
+    #endregion
+
+    private bool isBomb = false;
+    private bool isLaser = false;
+
+    #region HP
+
+    private CharacterHP playerHP;
+    public Image hpImage;
+    public Text hpText;
+    public float slideSpeed;
+
+    #endregion
+
     private void Start()
     {
         controller = GetComponent<CharacterController>();
         input= GetComponent<PlayerInput>();
+        playerHP = GetComponent<CharacterHP>();
         camTransform = Camera.main.transform;
         moveAction = input.actions["Move"];
         jumpAction = input.actions["Jump"];
         shootAction = input.actions["Shoot"];
     }
-    
-    
-
     private void ShootGunBoss()
     {
         Debug.Log("shoot");
@@ -77,6 +87,7 @@ public class PlayerController : MonoBehaviour
             Debug.Log(bulletController.target);
             bulletController.hit = false;
         }
+
     }
 
     void Update()
@@ -99,23 +110,33 @@ public class PlayerController : MonoBehaviour
             ShootGunBoss();
         }
 
-        if (Input.GetKey(KeyCode.LeftShift) && move != Vector3.zero) 
-        {
-            playerSpeed = playerRunSpeed;
+        float speed;
+        if (Input.GetKey(KeyCode.LeftShift) && move != Vector3.zero) {
+            speed = playerRunSpeed;
         }
         else if (move != Vector3.zero)
         {
-            playerSpeed = playerWalkSpeed;
+            speed = playerWalkSpeed;
         }
         else
         {
-            playerSpeed = playerStopSpeed;
+            speed = playerStopSpeed;
         }
+        if(isLaser)
+        {
+            speed -= 5;
+        }
+        playerSpeed = speed;
+
         controller.Move(move * Time.deltaTime * playerSpeed);
         // Changes the height position of the player..
         if (jumpAction.triggered && groundedPlayer)
         {
             playerVelocity.y += Mathf.Sqrt(jumpHeight * -3.0f * gravityValue);
+        }
+        if(isBomb)
+        {
+         //   playerVelocity.y = bombPower;
         }
 
         playerVelocity.y += gravityValue * Time.deltaTime;
@@ -124,6 +145,85 @@ public class PlayerController : MonoBehaviour
 
         Quaternion rotation = Quaternion.Euler(0, camTransform.eulerAngles.y, 0);
         transform.rotation = Quaternion.Lerp(transform.rotation, rotation, rotationSpeed * Time.deltaTime);
+
+        #endregion
+
+        HPSlide();
+
+        if(Input.GetKeyDown(KeyCode.R))
+        {
+            playerHP.ReviveHP();
+        }
     }
 
+    #region Shoot
+    private void ShootGunBoss()
+    {
+        Debug.Log("shoot");
+        RaycastHit hit;
+        GameObject bullet = ObjectPool.Instance.GetObject(PoolObjectType.BULLET);
+        SetBullet(bullet);
+        BulletController bulletController = bullet.GetComponent<BulletController>();
+        if(Physics.Raycast(camTransform.position, camTransform.forward, out hit, Mathf.Infinity))
+        {
+            bulletController.target = hit.point;
+            bulletController.hit = true;
+        }
+        else
+        {
+            bulletController.target = camTransform.position + camTransform.forward * bulletHitMissDistance;
+            bulletController.hit = true;
+        }
+    }
+
+    private void SetBullet(GameObject bullet)
+    {
+        bullet.transform.position = barrelTransform.position;
+        bullet.transform.rotation = Quaternion.identity;
+    }
+
+    #endregion
+
+
+    #region Bomb
+
+    public void Bomb(int damage, float bombPower)
+    {
+        isBomb = true;
+        Hit(damage);
+        playerVelocity.y = bombPower;
+        Debug.Log("Bomb");
+    }
+
+
+    #endregion
+
+    #region HP
+
+    private void HPSlide()
+    {
+        hpText.text = String.Format($"{playerHP.HP}%");
+        hpImage.fillAmount = Mathf.Lerp(hpImage.fillAmount, playerHP.HP/playerHP.max_hp, Time.deltaTime * slideSpeed);
+    }
+
+
+    public void Hit(int damage)
+    {
+        playerHP.Hit(damage);
+        if (playerHP.IsDead)
+        {
+            UiManager.Instance.ChangeScene("GameOver");
+        }
+    }
+
+    #endregion
+
+    #region SET
+
+    public void SlowSpeed(bool isL)
+    {
+        isLaser = isL;
+    }
+
+    #endregion
 }

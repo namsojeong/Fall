@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class UIManager : MonoBehaviour
+public class UiManager : MonoSingleton<UiManager>
 {
+
     public void OffUI(GameObject ui)
     {
         ui.SetActive(false);
@@ -19,4 +20,5 @@ public class UIManager : MonoBehaviour
     {
         SceneManager.LoadScene(scene);
     }
+
 }

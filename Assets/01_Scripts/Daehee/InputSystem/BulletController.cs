@@ -15,7 +15,7 @@ public class BulletController : MonoBehaviour
 
     private void OnEnable()
     {
-        Destroy(gameObject, timeToDestroy);
+        StartCoroutine(DeleteBullet());
     }
 
     private void Update()
@@ -26,7 +26,13 @@ public class BulletController : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         ContactPoint contact = collision.GetContact(0);
-        Debug.Log(contact.thisCollider.gameObject);
-        Destroy(gameObject);
+        ObjectPool.Instance.ReturnObject(PoolObjectType.BULLET, gameObject);
+        StopCoroutine(DeleteBullet());
+    }
+
+    private IEnumerator DeleteBullet()
+    {
+        yield return new WaitForSeconds(timeToDestroy);
+        ObjectPool.Instance.ReturnObject(PoolObjectType.BULLET, gameObject);
     }
 }
