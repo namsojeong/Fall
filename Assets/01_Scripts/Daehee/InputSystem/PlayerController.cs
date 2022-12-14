@@ -12,8 +12,10 @@ public class PlayerController : MonoBehaviour
     public static PlayerController Instance { get; private set; }
     private void Awake() => Instance = this;
 
+    private float playerSpeed = 0f;
+    public float GetPlayerSpeed => playerSpeed;
+
     #region WALK_BULLET
-    public float playerSpeed = 0f;
 
     [SerializeField] private float playerWalkSpeed = 10.0f;
     [SerializeField] private float playerRunSpeed = 20.0f;
@@ -47,6 +49,7 @@ public class PlayerController : MonoBehaviour
     #endregion
 
     private bool isBomb = false;
+    private bool isLaser = false;
 
     #region HP
 
@@ -93,17 +96,24 @@ public class PlayerController : MonoBehaviour
             ShootGunBoss();
         }
 
-        if (Input.GetKey(KeyCode.LeftShift) && move != Vector3.zero) { 
-            playerSpeed = playerRunSpeed;
+        float speed;
+        if (Input.GetKey(KeyCode.LeftShift) && move != Vector3.zero) {
+            speed = playerRunSpeed;
         }
         else if (move != Vector3.zero)
         {
-            playerSpeed = playerWalkSpeed;
+            speed = playerWalkSpeed;
         }
         else
         {
-            playerSpeed = playerStopSpeed;
+            speed = playerStopSpeed;
         }
+        if(isLaser)
+        {
+            speed -= 5;
+        }
+        playerSpeed = speed;
+
         controller.Move(move * Time.deltaTime * playerSpeed);
         // Changes the height position of the player..
         if (jumpAction.triggered && groundedPlayer)
@@ -190,6 +200,15 @@ public class PlayerController : MonoBehaviour
         {
             UiManager.Instance.ChangeScene("GameOver");
         }
+    }
+
+    #endregion
+
+    #region SET
+
+    public void SlowSpeed(bool isL)
+    {
+        isLaser = isL;
     }
 
     #endregion

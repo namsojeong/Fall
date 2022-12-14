@@ -25,6 +25,7 @@ public class BombMonster : MonoBehaviour
     // Component
     Animator anim;
     NavMeshAgent agent;
+    Rigidbody rigid;
     Collider collider;
 
     // Layer
@@ -37,10 +38,12 @@ public class BombMonster : MonoBehaviour
     private float colRadius = 100f;
     private int attackPower = 20;
     private float bombPower = 20.0f;
+    private float bombDistance = 10.0f;
 
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
+        rigid = GetComponent<Rigidbody>();
         anim = GetComponent<Animator>();
         collider = GetComponent<Collider>();
 
@@ -55,6 +58,7 @@ public class BombMonster : MonoBehaviour
 
     private void ResetMonster()
     {
+        agent.enabled = true;
         agent.speed = moveSpeed;
         agent.stoppingDistance = attackRange;
         fsm.ChangeState(States.Idle);
@@ -121,7 +125,11 @@ public class BombMonster : MonoBehaviour
     #endregion
 
     #region IDLE
+    private void Idle_Enter()
+    {
 
+    }
+        
     private void CheckDistanceIdle()
     {
         if (distance <= attackRange)
@@ -145,9 +153,8 @@ public class BombMonster : MonoBehaviour
 
     private void SetMove(bool isMove)
     {
-        agent.isStopped = !isMove;
+            agent.isStopped = !isMove;
     }
-
     private void Move()
     {
         if (target == null) return;
@@ -184,6 +191,27 @@ public class BombMonster : MonoBehaviour
 
     #endregion
 
+    #region COLLISION
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Bullet"))
+        {
+            fsm.ChangeState(States.Hit);   
+        }
+    }
+
+    private void Bomb()
+    {
+        Vector3 direction = -dir.normalized;
+        Vector3 destination = transform.position + transform.up * bombDistance + direction * bombDistance;
+        agent.enabled = false;
+        rigid.DOKill();
+        rigid.DOMove(destination, 0.3f);
+    }
+
+    #endregion
+
     #region ATTACK
 
 
@@ -211,6 +239,16 @@ public class BombMonster : MonoBehaviour
     }
 
     #endregion
+
+    #region HIT
+
+    private void Hit_Enter()
+    {
+        AnimationPlay(hashHit, true);
+        Bomb();
+    }
+
+    #endregion;
 
     #region DIE
 
