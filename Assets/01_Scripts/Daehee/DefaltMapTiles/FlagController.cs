@@ -8,7 +8,7 @@ public class FlagController : MonoBehaviour
     [SerializeField] private bool isDone = false;
     void Start()
     {
-        isDone = GameManager.instance.IsBoss;
+        isDone = GameManager.Instance.IsBoss;
     }
 
     // Update is called once per frame
@@ -16,7 +16,7 @@ public class FlagController : MonoBehaviour
     {
         isDone = CheckIsDone();
         if (isDone)
-            GameManager.instance.IsBoss = isDone;
+            GameManager.Instance.IsBoss = isDone;
     }
 
     bool CheckIsDone()

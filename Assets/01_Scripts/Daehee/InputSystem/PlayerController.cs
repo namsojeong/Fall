@@ -70,25 +70,6 @@ public class PlayerController : MonoBehaviour
         jumpAction = input.actions["Jump"];
         shootAction = input.actions["Shoot"];
     }
-    private void ShootGunBoss()
-    {
-        Debug.Log("shoot");
-        RaycastHit hit;
-        GameObject bullet = Instantiate(bulletPrefab, barrelTransform.position, Quaternion.identity, firePos);
-        BulletController bulletController = bullet.GetComponent<BulletController>();
-        if(Physics.Raycast(camTransform.position, camTransform.forward, out hit, Mathf.Infinity))
-        {
-            bulletController.target = hit.point;
-            bulletController.hit = true;
-        }
-        else
-        {
-            bulletController.target = camTransform.position + camTransform.forward*1000;
-            Debug.Log(bulletController.target);
-            bulletController.hit = false;
-        }
-
-    }
 
     void Update()
     {
@@ -146,7 +127,6 @@ public class PlayerController : MonoBehaviour
         Quaternion rotation = Quaternion.Euler(0, camTransform.eulerAngles.y, 0);
         transform.rotation = Quaternion.Lerp(transform.rotation, rotation, rotationSpeed * Time.deltaTime);
 
-        #endregion
 
         HPSlide();
 
@@ -164,15 +144,16 @@ public class PlayerController : MonoBehaviour
         GameObject bullet = ObjectPool.Instance.GetObject(PoolObjectType.BULLET);
         SetBullet(bullet);
         BulletController bulletController = bullet.GetComponent<BulletController>();
-        if(Physics.Raycast(camTransform.position, camTransform.forward, out hit, Mathf.Infinity))
+        if (Physics.Raycast(camTransform.position, camTransform.forward, out hit, Mathf.Infinity))
         {
             bulletController.target = hit.point;
             bulletController.hit = true;
         }
         else
         {
-            bulletController.target = camTransform.position + camTransform.forward * bulletHitMissDistance;
-            bulletController.hit = true;
+            bulletController.target = camTransform.position + camTransform.forward * 1000;
+            Debug.Log(bulletController.target);
+            bulletController.hit = false;
         }
     }
 
