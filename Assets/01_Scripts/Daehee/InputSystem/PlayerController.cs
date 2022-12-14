@@ -193,7 +193,7 @@ public class PlayerController : MonoBehaviour
         playerHP.Hit(damage);
         if (playerHP.IsDead)
         {
-            UiManager.Instance.ChangeScene("GameOver");
+            UI.Instance.ChangeScene("GameOver");
         }
     }
 

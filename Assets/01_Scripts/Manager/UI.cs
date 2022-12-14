@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class UiManager : MonoSingleton<UiManager>
+public class UI : MonoSingleton<UI>
 {
 
     public void OffUI(GameObject ui)
