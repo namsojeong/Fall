@@ -9,30 +9,39 @@ public class Laser : MonoBehaviour
     public LayerMask playerLayer;
 
     public GameObject hitParticle;
-    public GameObject startPos;
     public GameObject player;
+    public List<Transform> laserPoint;
 
     private LineRenderer line;
     private  RaycastHit hit;
     private  Vector3 endPos = Vector3.zero;
+    private Vector3 startPos;
 
     private float laserSpeed = 2f;
     private float slowSpeed;
+    private float delay = 2f;
+    int index = 0;
 
     private void Awake()
     {
         line = GetComponent<LineRenderer>();
-
     }
+
+    private void OnEnable()
+    {
+        startPos = transform.GetChild(0).position;
+        StartCoroutine(SelectPoint());
+    }
+
     private void Update()
     {
-        line.SetPosition(0, startPos.transform.position);
+        line.SetPosition(0, startPos);
         
-        endPos = Vector3.Lerp(endPos, player.transform.position, Time.deltaTime * laserSpeed);
+        endPos = Vector3.Lerp(endPos, laserPoint[index].position, Time.deltaTime);
         endPos.y = 0;
-        Vector3 dir = endPos - startPos.transform.position;
-        Debug.DrawRay(startPos.transform.position, dir*100f, Color.red);
-        if (Physics.Raycast(startPos.transform.position, dir, out hit, 100f, playerLayer))
+        Vector3 dir = endPos - startPos;
+        Debug.DrawRay(startPos, dir*100f, Color.red);
+        if (Physics.Raycast(startPos, dir, out hit, 100f, playerLayer))
         {
 
             Collider[] cols = Physics.OverlapSphere(hit.transform.position, 100f, playerLayer);
@@ -61,6 +70,16 @@ public class Laser : MonoBehaviour
         hitParticle.transform.position = endPos;
         hitParticle.transform.rotation = Quaternion.LookRotation(hit.normal);
         hitParticle.SetActive(true);
+    }
+
+    IEnumerator SelectPoint()
+    {
+        while(true)
+        {
+            index = Random.Range(0, laserPoint.Count);
+            yield return new WaitForSeconds(delay);
+        }
+
     }
 
 }
