@@ -27,7 +27,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float playerStopSpeed = 0.0f;
     [SerializeField] private float jumpHeight = 1.0f;
     [SerializeField] private float gravityValue = -9.81f;
-    [SerializeField] private float rotationSpeed = 8f;
+    [SerializeField] private float rotationSpeed = 100f;
     [SerializeField] private bool isRun = false;
     [SerializeField] private float bulletHitMissDistance = 25f;
     private float bombPower;
@@ -77,6 +77,11 @@ public class PlayerController : MonoBehaviour
 
     private void Start()
     {
+        if(SceneManager.GetActiveScene().name == "Game")
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
         controller = GetComponent<CharacterController>();
         input= GetComponent<PlayerInput>();
         playerHP = GetComponent<CharacterHP>();
@@ -89,11 +94,22 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        groundedPlayer = controller.isGrounded;
+
         DefaultSetting();
+        if (jumpAction.triggered && groundedPlayer)
+        {
+            playerVelocity.y += Mathf.Sqrt(jumpHeight * -3.0f * gravityValue);
+        }
         if (SceneManager.GetActiveScene().name == "DefaultGameScene")
         {
             DefaultSceneRotate();
             DefaultSceneMove();
+            if (shootAction.triggered)
+            {
+                SoundManager.instance.SFXPlay(gunSound, playerAudio);
+                DefaultSceneShootGun();
+            }
         }
         else
         {
@@ -103,6 +119,11 @@ public class PlayerController : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.R))
             {
                 playerHP.ReviveHP();
+            }
+            if (shootAction.triggered && isLooking)
+            {
+                SoundManager.instance.SFXPlay(gunSound, playerAudio);
+                GameSceneShootGun();
             }
         }
     }
@@ -114,16 +135,12 @@ public class PlayerController : MonoBehaviour
         model.transform.position = transform.position;
         playerSpeed = Input.GetKey(KeyCode.LeftShift) ? playerRunSpeed : playerWalkSpeed;
 
-        groundedPlayer = controller.isGrounded;
         if (groundedPlayer && playerVelocity.y < 0)
         {
             playerVelocity.y = 0f;
         }
 
-        if (jumpAction.triggered && groundedPlayer)
-        {
-            playerVelocity.y += Mathf.Sqrt(jumpHeight * -3.0f * gravityValue);
-        }
+        
         if (isBomb)
         {
             playerVelocity.y = bombPower;
@@ -157,11 +174,6 @@ public class PlayerController : MonoBehaviour
         Vector3 move = new Vector3(input.x, 0, input.y);
         move = move.x * camTransform.right.normalized + move.z * camTransform.forward.normalized;
         move.y = 0;
-        if (aimAction.IsPressed() && isLooking)
-        {
-            SoundManager.instance.SFXPlay(gunSound, playerAudio);
-            GameSceneShootGun();
-        }
 
         float speed;
         if (Input.GetKey(KeyCode.LeftShift) && move != Vector3.zero)
@@ -204,11 +216,6 @@ public class PlayerController : MonoBehaviour
         }
         playerSpeed = speed;
         controller.Move(move.normalized * (Time.deltaTime * playerSpeed));
-        if (aimAction.IsPressed() && isLooking)
-        {
-            SoundManager.instance.SFXPlay(gunSound, playerAudio);
-            DefaultSceneShootGun();
-        }
     }
     #endregion
 
@@ -240,6 +247,7 @@ public class PlayerController : MonoBehaviour
         BulletController bulletController = bullet.GetComponent<BulletController>();
         if (Physics.Raycast(camTransform.position, camTransform.forward, out hit, Mathf.Infinity))
         {
+            Debug.Log(bulletController.target);
             bulletController.target = hit.point;
             bulletController.hit = true;
         }
