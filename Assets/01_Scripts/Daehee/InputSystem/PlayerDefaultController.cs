@@ -6,8 +6,10 @@ using UnityEngine.InputSystem;
 
 public class PlayerDefaultController : MonoBehaviour
 {
+    //public static PlayerDefaultController Instance { get; private set; }
     public CharacterController controller;
     private PlayerInput input;
+    private Rigidbody defaultPlayerRB;
     
     [SerializeField]
     private float gravityValue = -9.81f;
@@ -17,11 +19,19 @@ public class PlayerDefaultController : MonoBehaviour
     private Vector3 playerVelocity;
     private Vector2 inputVec;
     private Vector2 playerPos;
+    private float speed;
+
+    public float Speed
+    {
+        get { return speed; }
+        set { speed = value; }
+    }
     private float radLook;
     private float angle;
 
     public InputAction moveAction;
     public InputAction jumpAction;
+    public InputAction shootAction;
     
     public GameObject bulletPrefab;
     void Start()
@@ -30,13 +40,14 @@ public class PlayerDefaultController : MonoBehaviour
         input = GetComponent<PlayerInput>();
         moveAction = input.actions["Move"];
         jumpAction = input.actions["Jump"];
+        shootAction = input.actions["Shoot"];
+        defaultPlayerRB = GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        MovePlayer();
-        RotatePlayer();
+        
         groundedPlayer = controller.isGrounded;
         if (!groundedPlayer)
         {
@@ -46,7 +57,7 @@ public class PlayerDefaultController : MonoBehaviour
         {
             playerVelocity.y = 0;
         }
-        if(Input.GetMouseButtonDown(0))
+        if(shootAction.triggered)
         {
             ShootGunBoss();
         }
@@ -55,8 +66,20 @@ public class PlayerDefaultController : MonoBehaviour
         {
             playerVelocity.y += Mathf.Sqrt(jumpHeight * -1.0f * gravityValue);
         }
-
-
+        if (Input.GetKey(KeyCode.LeftShift) && defaultPlayerRB.velocity != Vector3.zero) 
+        {
+            speed=20f;
+        }
+        else if (defaultPlayerRB.velocity != Vector3.zero)
+        {
+            speed = 10f;
+        }
+        else
+        {
+            speed = 0f;
+        }
+        MovePlayer();
+        RotatePlayer();
         controller.Move(playerVelocity * Time.deltaTime);
     }
 
@@ -64,17 +87,10 @@ public class PlayerDefaultController : MonoBehaviour
     {
         Vector2 input = moveAction.ReadValue<Vector2>();
         Vector3 move = new Vector3(input.x, playerVelocity.y, input.y);
-        controller.Move(move.normalized * (Time.deltaTime * 10f));
+        controller.Move(move.normalized * (Time.deltaTime * speed));
     }
 
-    private void RotatePlayer()
-    {
-        playerPos = Camera.main.WorldToScreenPoint(transform.position);
-        radLook = Mathf.Atan2(Input.mousePosition.y - playerPos.y, Input.mousePosition.x - playerPos.x);
-        angle = radLook * Mathf.Rad2Deg;
-        transform.rotation = Quaternion.Euler(0, -angle + 120, 0);
-
-    }
+    
     private void ShootGunBoss()
     {
         RaycastHit hit;

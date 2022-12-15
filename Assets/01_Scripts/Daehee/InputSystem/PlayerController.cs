@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using Mono.Cecil;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(CharacterController), typeof(PlayerInput))]
 public class PlayerController : MonoBehaviour
@@ -14,6 +15,7 @@ public class PlayerController : MonoBehaviour
 
     private float playerSpeed = 0f;
     public float GetPlayerSpeed => playerSpeed;
+    public void SetPlayerSpeed(float value) => playerSpeed = value;
 
     #region WALK_BULLET
 
@@ -41,6 +43,7 @@ public class PlayerController : MonoBehaviour
     private InputAction moveAction;
     public InputAction jumpAction;
     public InputAction shootAction;
+    public InputAction aimAction;
 
     float time = 0f;
 
@@ -50,6 +53,7 @@ public class PlayerController : MonoBehaviour
 
     private bool isBomb = false;
     private bool isLaser = false;
+    public bool isLooking = false;
 
     #region HP
 
@@ -57,6 +61,13 @@ public class PlayerController : MonoBehaviour
     public Image hpImage;
     public Text hpText;
     public float slideSpeed;
+
+    #endregion
+
+    #region Sound
+
+    private string gunSound = "gun";
+    [SerializeField] AudioClip playerAudio;
 
     #endregion
 
@@ -69,10 +80,12 @@ public class PlayerController : MonoBehaviour
         moveAction = input.actions["Move"];
         jumpAction = input.actions["Jump"];
         shootAction = input.actions["Shoot"];
+        aimAction = input.actions["Aim"];
     }
 
     void Update()
     {
+        isLooking = aimAction.IsPressed();
         model.transform.position = transform.position;
         playerSpeed = Input.GetKey(KeyCode.LeftShift) ? playerRunSpeed : playerWalkSpeed;
         
@@ -86,8 +99,9 @@ public class PlayerController : MonoBehaviour
         Vector3 move = new Vector3(input.x,0,input.y);
         move = move.x * camTransform.right.normalized + move.z*camTransform.forward.normalized;
         move.y = 0;
-        if(Input.GetMouseButtonDown(0))
+        if(Input.GetMouseButtonDown(0)&&isLooking)
         {
+            SoundManager.instance.SFXPlay(gunSound,playerAudio);
             ShootGunBoss();
         }
 
@@ -124,9 +138,10 @@ public class PlayerController : MonoBehaviour
 
         controller.Move(playerVelocity * Time.deltaTime);
 
-        Quaternion rotation = Quaternion.Euler(0, camTransform.eulerAngles.y, 0);
-        transform.rotation = Quaternion.Lerp(transform.rotation, rotation, rotationSpeed * Time.deltaTime);
-
+        if (SceneManager.GetActiveScene().name == "DefaultGameScene")
+            RotatePlayer();
+        else
+            GameSceneRotate();
 
         HPSlide();
 
@@ -134,6 +149,19 @@ public class PlayerController : MonoBehaviour
         {
             playerHP.ReviveHP();
         }
+    }
+
+    private void RotatePlayer()
+    {
+        playerPos = Camera.main.WorldToScreenPoint(transform.position);
+        radLook = Mathf.Atan2(Input.mousePosition.y - playerPos.y, Input.mousePosition.x - playerPos.x);
+        angle = radLook * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.Euler(0, -angle + 120, 0);
+    }
+    void GameSceneRotate()
+    {
+        Quaternion rotation = Quaternion.Euler(0, camTransform.eulerAngles.y, 0);
+        transform.rotation = Quaternion.Lerp(transform.rotation, rotation, rotationSpeed * Time.deltaTime);
     }
 
     #region Shoot
