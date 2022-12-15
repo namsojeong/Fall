@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using Mono.Cecil;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(CharacterController), typeof(PlayerInput))]
 public class PlayerController : MonoBehaviour
@@ -14,6 +15,7 @@ public class PlayerController : MonoBehaviour
 
     private float playerSpeed = 0f;
     public float GetPlayerSpeed => playerSpeed;
+    public void SetPlayerSpeed(float value) => playerSpeed = value;
 
     #region WALK_BULLET
 
@@ -136,9 +138,10 @@ public class PlayerController : MonoBehaviour
 
         controller.Move(playerVelocity * Time.deltaTime);
 
-        Quaternion rotation = Quaternion.Euler(0, camTransform.eulerAngles.y, 0);
-        transform.rotation = Quaternion.Lerp(transform.rotation, rotation, rotationSpeed * Time.deltaTime);
-
+        if (SceneManager.GetActiveScene().name == "DefaultGameScene")
+            RotatePlayer();
+        else
+            GameSceneRotate();
 
         HPSlide();
 
@@ -146,6 +149,19 @@ public class PlayerController : MonoBehaviour
         {
             playerHP.ReviveHP();
         }
+    }
+
+    private void RotatePlayer()
+    {
+        playerPos = Camera.main.WorldToScreenPoint(transform.position);
+        radLook = Mathf.Atan2(Input.mousePosition.y - playerPos.y, Input.mousePosition.x - playerPos.x);
+        angle = radLook * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.Euler(0, -angle + 120, 0);
+    }
+    void GameSceneRotate()
+    {
+        Quaternion rotation = Quaternion.Euler(0, camTransform.eulerAngles.y, 0);
+        transform.rotation = Quaternion.Lerp(transform.rotation, rotation, rotationSpeed * Time.deltaTime);
     }
 
     #region Shoot
