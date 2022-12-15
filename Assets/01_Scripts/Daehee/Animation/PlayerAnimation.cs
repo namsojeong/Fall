@@ -11,11 +11,13 @@ public class PlayerAnimation : MonoBehaviour
     private Animator animator;
 
     CharacterController playerController;
+    PlayerController player;
 
     void Start()
     {
         animator = GetComponent<Animator>();
         playerController = GetComponentInParent<CharacterController>();
+        player = GetComponentInParent<PlayerController>();
     }
 
 
@@ -29,34 +31,23 @@ public class PlayerAnimation : MonoBehaviour
 
     void IsGroundCheck()
     {
-            if(playerController.isGrounded)
-                animator.SetBool("isGround", true);
+        if (player.groundedPlayer)
+            animator.SetBool("isGround", true);
     }
 
     void PlayerShotAnim()
     {
-        bool isShot;
-        isShot = SceneManager.GetActiveScene().name == "DefaultGameScene" ? 
-            PlayerDefaultController.Instance.shootAction.triggered : PlayerController.Instance.shootAction.triggered;
-        if(isShot)  
+        if (player.shootAction.triggered)  
             animator.SetTrigger("shot");
     }
 
     void PlayerMoveAnim()
     {
-        float speed;
-        if (SceneManager.GetActiveScene().name == "DefaultGameScene")
-            speed = PlayerDefaultController.Instance.Speed;
-        else
-            speed = PlayerController.Instance.GetPlayerSpeed;
-        animator.SetFloat("speed", speed);
+        animator.SetFloat("speed", player.GetPlayerSpeed);
     }
     void PlayerJumpAnim()
     {
-        bool isground;
-        isground = SceneManager.GetActiveScene().name == "DefaultGameScene" ?
-            PlayerDefaultController.Instance.jumpAction.triggered : PlayerController.Instance.jumpAction.triggered;
-        if (isground)
+        if (!player.groundedPlayer)
             animator.SetTrigger("jump");
     }
 }
