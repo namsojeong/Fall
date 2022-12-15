@@ -8,7 +8,7 @@ public class DefaultGameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Invoke("SceneVS",10f);
+        //Invoke("SceneVS",10f);
     }
 
     // Update is called once per frame
