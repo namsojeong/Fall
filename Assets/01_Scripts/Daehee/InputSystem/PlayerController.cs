@@ -159,7 +159,7 @@ public class PlayerController : MonoBehaviour
         move.y = 0;
         if (aimAction.IsPressed() && isLooking)
         {
-            SoundManager.instance.SFXPlay(gunSound, playerAudio);
+            SoundManager.Instance.SFXPlay(playerAudio);
             GameSceneShootGun();
         }
 
@@ -206,7 +206,7 @@ public class PlayerController : MonoBehaviour
         controller.Move(move.normalized * (Time.deltaTime * playerSpeed));
         if (aimAction.IsPressed() && isLooking)
         {
-            SoundManager.instance.SFXPlay(gunSound, playerAudio);
+            SoundManager.Instance.SFXPlay(playerAudio);
             DefaultSceneShootGun();
         }
     }

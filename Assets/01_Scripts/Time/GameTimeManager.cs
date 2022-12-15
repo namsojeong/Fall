@@ -50,7 +50,17 @@ public class GameTimeManager : MonoSingleton<GameTimeManager>
 
     private void EndTime()
     {
-        UI.Instance.ChangeScene(endScene);
+        if(GameManager.Instance.GetSceneState() == SceneState.BASIC_GAME)
+        {
+            UI.Instance.SetCursor(true);
+        UI.Instance.ChangeScene("vs");
+        }
+        else
+        {
+            UI.Instance.SetCursor(false);
+        UI.Instance.ChangeScene("GameOver");
+        }
+
     }
 
 }

@@ -6,12 +6,12 @@ public class FlagController : MonoBehaviour
 {
     [SerializeField] private List<GameObject> _flagGrp;
     [SerializeField] private bool isDone = false;
+
     void Start()
     {
         isDone = GameManager.Instance.IsBoss;
     }
 
-    // Update is called once per frame
     void Update()
     {
         isDone = CheckIsDone();
@@ -29,4 +29,5 @@ public class FlagController : MonoBehaviour
         }
         return done;
     }
+
 }

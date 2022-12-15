@@ -2,31 +2,56 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SoundManager : MonoBehaviour
+public class SoundManager : MonoSingleton<SoundManager>
 {
-    public static SoundManager instance;
-    private void Awake()
+    [SerializeField] private AudioSource bgm;
+    [SerializeField] private AudioSource sfx;
+    [SerializeField] private AudioSource click;
+
+    public void SFXPlay(AudioClip audio)
     {
-        if(instance == null)
-        {
-            instance = this;
-            DontDestroyOnLoad(instance);
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        sfx.Stop();
+        sfx.clip = audio;
+        sfx.Play();
+    }
+    
+    public void BGMPlay(AudioClip audio)
+    {
+        bgm.Stop();
+        bgm.clip = audio;
+        bgm.Play();
+    }
+    
+    public void ClickPlay(AudioClip audio)
+    {
+        click.Stop();
+        click.clip = audio;
+        click.Play();
     }
 
-    // ReSharper disable Unity.PerformanceAnalysis
-    public void SFXPlay(string sfxName, AudioClip clip)
+    public void SetVolume(int val)
     {
-        GameObject go = new GameObject(sfxName + "Sound");
-        AudioSource audiosource = go.AddComponent<AudioSource>();
-        if (audiosource.name == "laserSound")
-            audiosource.spatialBlend = 1f;
-        audiosource.clip = clip;
-        Destroy(go, clip.length);
-        audiosource.Play();
+        bgm.volume = val;
+        sfx.volume = val;
+        click.volume = val;
     }
+
+    //public void SFXPlay(string sfxName, AudioClip clip)
+    //{
+    //    GameObject go = new GameObject(sfxName + "Sound");
+    //    AudioSource audiosource = go.AddComponent<AudioSource>();
+    //    if (audiosource.name == "laserSound")
+    //        audiosource.spatialBlend = 1f;
+    //    audiosource.clip = clip;
+    //    Destroy(go, clip.length);
+    //    audiosource.Play();
+    //}
+
+
+    //public IEnumerator SetMusicTime(float length)
+    //{
+    //    //isPlayingMusic = true;
+    //    yield return new WaitForSeconds(length);
+    //    //isPlayingMusic = false;
+    //}
 }

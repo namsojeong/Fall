@@ -13,35 +13,30 @@ public class UI : MonoSingleton<UI>
     public Button settingBtn;
     public TMP_Text curScoreText;
 
+    private bool isPause = true;
+
     private void Awake()
     {
-        resumeBtn.onClick.AddListener(ESCout);
+        //resumeBtn.onClick.AddListener(ESCout);
         Debug.Log(resumeBtn);
-    }
-
-    private void Update()
-    {
-        curScoreText.text = $"Score :{GameManager.Instance.CurScore}";
     }
 
     public void ESCin()
     {
         pauseObj.SetActive(true);
-        bool isPause = GameManager.Instance.IsPause;
         if (!isPause)
         {
-            GameManager.Instance.IsPause = true;
             Time.timeScale = 0;
         }
     }
+
     public void ESCout()
     {
         pauseObj.SetActive(false);
-        bool isPause = GameManager.Instance.IsPause;
-        if(isPause)
+        if (isPause)
         {
-            GameManager.Instance.IsPause = false;
-            Time.timeScale = 1;            
+            isPause = false;
+            Time.timeScale = 1;
         }
     }
     public void OffUI(GameObject ui)
@@ -54,21 +49,64 @@ public class UI : MonoSingleton<UI>
         ui.SetActive(true);
     }
 
-    public void ChangeScene(string scene)
+    public void SetCursor(bool isOn)
     {
-        if(scene=="DefaultGameScene")
+        Cursor.visible = !isOn;
+        if (isOn)
         {
-            GameTimeManager.Instance.endScene = "vs";
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
-            
+            Cursor.lockState = CursorLockMode.Locked;
         }
         else
         {
-            GameTimeManager.Instance.endScene = "GameOver";
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.None;
         }
+
+    }
+
+    public void ChangeScene(SceneState scene)
+    {
+        GameManager.Instance.SetSceneState(scene);
+        switch (scene)
+        {
+            case SceneState.START:
+                SceneManager.LoadScene("Start");
+                break;
+            case SceneState.BASIC_GAME:
+                SceneManager.LoadScene("DefaultGameScene");
+                break;
+            case SceneState.VS:
+                SceneManager.LoadScene("vs");
+                break;
+            case SceneState.BOSS_GAME:
+                SceneManager.LoadScene("BossScene");
+                break;
+            case SceneState.GAMEOVER:
+                SceneManager.LoadScene("GameOver");
+                break;
+        }
+    }
+
+    public void ChangeScene(string scene)
+    {
+        switch (scene)
+        {
+            case "Start":
+                GameManager.Instance.SetSceneState(SceneState.START);
+                break;
+            case "DefaultGameScene":
+                GameManager.Instance.SetSceneState(SceneState.BASIC_GAME);
+                break;
+            case "vs":
+                GameManager.Instance.SetSceneState(SceneState.VS);
+                break;
+            case "BossScene":
+                GameManager.Instance.SetSceneState(SceneState.BOSS_GAME);
+                break;
+            case "GameOver":
+                GameManager.Instance.SetSceneState(SceneState.GAMEOVER);
+                break;
+        }
+
         SceneManager.LoadScene(scene);
     }
 

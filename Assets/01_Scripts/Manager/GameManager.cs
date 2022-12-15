@@ -9,12 +9,9 @@ public class GameManager : MonoSingleton<GameManager>
 {
 
     [SerializeField] private bool isBoss = false;
-    [SerializeField] private bool isPause = false;
     [SerializeField] public int curScore = 0;
 
-    [SerializeField] private bool isPlayingMusic = false;
-    [SerializeField] private AudioClip gameSceneBgm;
-    [SerializeField] private AudioClip defaultSceneBgm;
+    SceneState curScene = SceneState.START;
 
     public int CurScore
     {
@@ -27,42 +24,35 @@ public class GameManager : MonoSingleton<GameManager>
         set { isBoss = value; }
     }
 
-    public bool IsPause
+    public SceneState GetSceneState()
     {
-        get { return isPause; }
-        set { isPause = value; }
+        return curScene;
     }
-
-    public void Start()
+    
+    public void SetSceneState(SceneState change)
     {
-        
+        curScene = change;
     }
 
     private void Update()
     {
-        if (!isPlayingMusic)
-        {
-            if (SceneManager.GetActiveScene().name == "Game")
-            {
-                SoundManager.instance.SFXPlay("GameSceneBgm",gameSceneBgm);
-                isPlayingMusic = true;
-                StartCoroutine(SetMusicTime(gameSceneBgm.length));
-            }
-            else if (SceneManager.GetActiveScene().name == "DefualtGameScene")
-            {
-                SoundManager.instance.SFXPlay("DefaltSceneBgm",defaultSceneBgm);
-                isPlayingMusic = true;
-                StartCoroutine(SetMusicTime(defaultSceneBgm.length));
-            }
-        }
-        if(Input.GetKeyDown(KeyCode.Escape))
-            UI.Instance.ESCin();
+        //if (!isPlayingMusic)
+        //{
+        //    if (SceneManager.GetActiveScene().name == "Game")
+        //    {
+        //        SoundManager.instance.SFXPlay("GameSceneBgm",gameSceneBgm);
+        //        isPlayingMusic = true;
+        //        StartCoroutine(SetMusicTime(gameSceneBgm.length));
+        //    }
+        //    else if (SceneManager.GetActiveScene().name == "DefualtGameScene")
+        //    {
+        //        SoundManager.instance.SFXPlay("DefaltSceneBgm",defaultSceneBgm);
+        //        isPlayingMusic = true;
+        //        StartCoroutine(SetMusicTime(defaultSceneBgm.length));
+        //    }
+        //}
+        //if(Input.GetKeyDown(KeyCode.Escape))
+        //    UI.Instance.ESCin();
     }
 
-    public IEnumerator SetMusicTime(float length)
-    {
-        isPlayingMusic = true;
-        yield return new WaitForSeconds(length);
-        isPlayingMusic = false;
-    }
 }
