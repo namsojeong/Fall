@@ -23,7 +23,9 @@ public class PlayerAnimation : MonoBehaviour
 
     void PlayerShotAnim()
     {
-        animator.SetTrigger("shot");
+        bool isShot = PlayerController.Instance.shootAction.triggered;
+        if(isShot)  
+            animator.SetTrigger("shot");
     }
 
     void PlayerMoveAnim()

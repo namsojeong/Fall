@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
@@ -10,13 +11,19 @@ public class UI : MonoSingleton<UI>
     public Button resumeBtn;
     public GameObject pauseObj;
     public Button settingBtn;
+    public TMP_Text curScoreText;
 
     private void Awake()
     {
         resumeBtn.onClick.AddListener(ESCout);
         Debug.Log(resumeBtn);
     }
-    
+
+    private void Update()
+    {
+        curScoreText.text = $"Score :{GameManager.Instance.CurScore}";
+    }
+
     public void ESCin()
     {
         pauseObj.SetActive(true);

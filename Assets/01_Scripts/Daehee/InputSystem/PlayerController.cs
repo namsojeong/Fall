@@ -41,6 +41,7 @@ public class PlayerController : MonoBehaviour
     private InputAction moveAction;
     public InputAction jumpAction;
     public InputAction shootAction;
+    public InputAction aimAction;
 
     float time = 0f;
 
@@ -50,6 +51,7 @@ public class PlayerController : MonoBehaviour
 
     private bool isBomb = false;
     private bool isLaser = false;
+    public bool isLooking = false;
 
     #region HP
 
@@ -57,6 +59,13 @@ public class PlayerController : MonoBehaviour
     public Image hpImage;
     public Text hpText;
     public float slideSpeed;
+
+    #endregion
+
+    #region Sound
+
+    private string gunSound = "gun";
+    [SerializeField] AudioClip playerAudio;
 
     #endregion
 
@@ -69,10 +78,12 @@ public class PlayerController : MonoBehaviour
         moveAction = input.actions["Move"];
         jumpAction = input.actions["Jump"];
         shootAction = input.actions["Shoot"];
+        aimAction = input.actions["Aim"];
     }
 
     void Update()
     {
+        isLooking = aimAction.IsPressed();
         model.transform.position = transform.position;
         playerSpeed = Input.GetKey(KeyCode.LeftShift) ? playerRunSpeed : playerWalkSpeed;
         
@@ -86,8 +97,9 @@ public class PlayerController : MonoBehaviour
         Vector3 move = new Vector3(input.x,0,input.y);
         move = move.x * camTransform.right.normalized + move.z*camTransform.forward.normalized;
         move.y = 0;
-        if(Input.GetMouseButtonDown(0))
+        if(Input.GetMouseButtonDown(0)&&isLooking)
         {
+            SoundManager.instance.SFXPlay(gunSound,playerAudio);
             ShootGunBoss();
         }
 
