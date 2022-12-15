@@ -11,7 +11,7 @@ public class GameTimeManager : MonoSingleton<GameTimeManager>
     private float curTime = Define.GAME_TIME;
     private bool isStoppedTime = false;
 
-
+    public string endScene = "VS";
     public void ResetGameTime()
     {
         curTime = Define.GAME_TIME;
@@ -21,6 +21,10 @@ public class GameTimeManager : MonoSingleton<GameTimeManager>
     {
         curTime = setTime;
         isStoppedTime = false;
+    }
+
+    private void Awake()
+    {
     }
 
     private void Update()
@@ -46,7 +50,7 @@ public class GameTimeManager : MonoSingleton<GameTimeManager>
 
     private void EndTime()
     {
-        UI.Instance.ChangeScene("GameOver");
+        UI.Instance.ChangeScene(endScene);
     }
 
 }
