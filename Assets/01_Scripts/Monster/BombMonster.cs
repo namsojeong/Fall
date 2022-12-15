@@ -40,12 +40,15 @@ public class BombMonster : MonoBehaviour
     private float bombPower = 20.0f;
     private float bombDistance = 10.0f;
 
+    private FlashHit hitFlash;
+
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
         rigid = GetComponent<Rigidbody>();
         anim = GetComponent<Animator>();
         collider = GetComponent<Collider>();
+        hitFlash = GetComponent<FlashHit>();
 
         target = SearchTarget();
         fsm = StateMachine<States>.Initialize(this, States.Idle);
@@ -245,6 +248,7 @@ public class BombMonster : MonoBehaviour
     private void Hit_Enter()
     {
         AnimationPlay(hashHit, true);
+        hitFlash.DamageEffect();
         Bomb();
     }
 
