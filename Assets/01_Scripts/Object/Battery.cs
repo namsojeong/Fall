@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,14 +13,6 @@ public class Battery : MonoBehaviour
         batteryUI = GetComponent<Image>();
     }
 
-    private void Update()
-    {
-        if(Input.GetKeyDown(KeyCode.Q))
-        {
-            AddBattery();
-        }
-    }
-
     public void AddBattery()
     {
         curBattery++;
@@ -31,5 +22,15 @@ public class Battery : MonoBehaviour
     private void UpdateBattery()
     {
         batteryUI.sprite = batterySprites[curBattery];
+    }
+
+
+    private void OnTriggerEnter(Collider collision)
+    {
+        if (collision.CompareTag("Player"))
+        {
+            AddBattery();
+            gameObject.SetActive(false);
+        }
     }
 }

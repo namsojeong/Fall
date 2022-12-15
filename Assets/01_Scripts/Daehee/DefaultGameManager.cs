@@ -5,13 +5,11 @@ using UnityEngine.SceneManagement;
 
 public class DefaultGameManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
-        //Invoke("SceneVS",10f);
+        GameTimeManager.Instance.StartTime(3);
     }
 
-    // Update is called once per frame
     void SceneVS()
     {
         SceneManager.LoadScene("vs");

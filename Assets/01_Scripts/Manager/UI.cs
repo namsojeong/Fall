@@ -58,12 +58,14 @@ public class UI : MonoSingleton<UI>
     {
         if(scene=="DefaultGameScene")
         {
+            GameTimeManager.Instance.endScene = "vs";
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
             
         }
         else
         {
+            GameTimeManager.Instance.endScene = "GameOver";
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
         }
