@@ -58,7 +58,7 @@ public class RippleEffect : MonoBehaviour {
 
         //Find the Shader
         material = new Material(Shader.Find("Hidden/RippleDiffuse"));
-            playerController = GameObject.Find("Player 1").GetComponent<PlayerController>();
+        playerController = GameObject.Find("Player").GetComponent<PlayerController>();
 
     }
 

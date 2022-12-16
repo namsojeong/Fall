@@ -11,6 +11,8 @@ public class Battery : MonoBehaviour
     private void Awake()
     {
         batteryUI = GetComponent<Image>();
+
+        curBattery = 0;
     }
 
     public void AddBattery()

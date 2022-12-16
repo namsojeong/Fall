@@ -196,11 +196,11 @@ public class BombMonster : MonoBehaviour
 
     #region COLLISION
 
-    private void OnCollisionEnter(Collision collision)
+    private void OnTriggerEnter(Collider other)
     {
-        if (collision.gameObject.CompareTag("Bullet"))
+        if (collider.tag == "Bullet")
         {
-            fsm.ChangeState(States.Hit);   
+            fsm.ChangeState(States.Hit);
         }
     }
 

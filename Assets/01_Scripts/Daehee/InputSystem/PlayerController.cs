@@ -57,7 +57,6 @@ public class PlayerController : MonoBehaviour
 
     private bool isBomb = false;
     private bool isLaser = false;
-    public bool isAim;
 
     #region HP
 
@@ -95,7 +94,6 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        isAim = aimAction.IsPressed();
         groundedPlayer = controller.isGrounded;
 
         DefaultSetting();
@@ -109,7 +107,7 @@ public class PlayerController : MonoBehaviour
             DefaultSceneMove();
             if (shootAction.triggered)
             {
-                SoundManager.instance.SFXPlay(gunSound, playerAudio);
+                SoundManager.Instance.SFXPlay(playerAudio);
                 DefaultSceneShootGun();
             }
         }
@@ -122,9 +120,9 @@ public class PlayerController : MonoBehaviour
             {
                 playerHP.ReviveHP();
             }
-            if (shootAction.triggered && isAim)
+            if (shootAction.triggered && aimAction.IsPressed())
             {
-                SoundManager.instance.SFXPlay(gunSound, playerAudio);
+                SoundManager.Instance.SFXPlay(playerAudio);
                 GameSceneShootGun();
             }
         }
@@ -175,12 +173,7 @@ public class PlayerController : MonoBehaviour
         Vector3 move = new Vector3(input.x, 0, input.y);
         move = move.x * camTransform.right.normalized + move.z * camTransform.forward.normalized;
         move.y = 0;
-        if (aimAction.IsPressed() && isLooking)
-        {
-            SoundManager.Instance.SFXPlay(playerAudio);
-            GameSceneShootGun();
-        }
-
+        
         float speed;
         if (Input.GetKey(KeyCode.LeftShift) && move != Vector3.zero)
         {
@@ -222,7 +215,7 @@ public class PlayerController : MonoBehaviour
         }
         playerSpeed = speed;
         controller.Move(move.normalized * (Time.deltaTime * playerSpeed));
-        if (aimAction.IsPressed() && isLooking)
+        if (aimAction.IsPressed())
         {
             SoundManager.Instance.SFXPlay(playerAudio);
             DefaultSceneShootGun();
