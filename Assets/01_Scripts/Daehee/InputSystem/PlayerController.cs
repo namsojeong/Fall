@@ -239,7 +239,9 @@ public class PlayerController : MonoBehaviour
         RaycastHit hit;
         GameObject bullet = Instantiate(bulletPrefab, transform.position + Vector3.up, Quaternion.identity);
         BulletController bulletController = bullet.GetComponent<BulletController>();
-        if (Physics.Raycast(transform.position + Vector3.up, transform.forward, out hit, Mathf.Infinity))
+        Vector3 playerpos = Camera.main.WorldToScreenPoint(transform.position);
+        Vector3 mousepos = Camera.main.WorldToScreenPoint(Input.mousePosition);
+        if (Physics.Raycast(transform.position + Vector3.up, mousepos- playerpos, out hit, Mathf.Infinity))
         {
             bulletController.target = hit.point;
             bulletController.hit = true;
