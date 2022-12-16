@@ -33,7 +33,6 @@ public class MonsterSpawner : MonoBehaviour
         GameObject monster;
         if (isDefault)monster = ObjectPool.Instance.GetObject(PoolObjectType.Bomb_DefaultMonster);
         else monster = ObjectPool.Instance.GetObject(PoolObjectType.BOMB_MONSTER);
-        Debug.Log(monster);
         monster.transform.position = transform.position;
         monster.transform.parent = null;
         monster.transform.rotation = Quaternion.identity;

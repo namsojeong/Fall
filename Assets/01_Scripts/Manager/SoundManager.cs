@@ -24,8 +24,8 @@ public class SoundManager : MonoSingleton<SoundManager>
 
     public void LaserPlay(AudioClip audio)
     {
-        sfx.clip = audio;
-        sfx.Play();
+        laser.clip = audio;
+        laser.Play();
     }
 
     public void BGMPlay(AudioClip audio)

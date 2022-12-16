@@ -284,7 +284,6 @@ public class PlayerController : MonoBehaviour
         isBomb = true;
         rigid.AddForce(Vector3.up * bombPower);
         Hit(damage);
-        Debug.Log("Bomb");
     }
 
 

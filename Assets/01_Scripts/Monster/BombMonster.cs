@@ -204,6 +204,15 @@ public class BombMonster : MonoBehaviour
         }
     }
 
+    private void OnCollisionEnter(Collision collision)
+    {
+        if(collision.collider.tag=="Bullet")
+        {
+            Debug.Log("bbb");
+            fsm.ChangeState(States.Hit);
+        }
+    }
+
     private void Bomb()
     {
         Vector3 direction = -dir.normalized;

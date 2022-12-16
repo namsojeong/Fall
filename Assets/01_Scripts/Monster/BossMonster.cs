@@ -12,6 +12,12 @@ public class BossMonster : MonoBehaviour
     {
         hitFlash = GetComponent<FlashHit>();
         monsterHP = GetComponent<CharacterHP>();
+
+    }
+
+    private void Start()
+    {
+        UI.Instance.SetCursor(true);
     }
 
     private void Die()
