@@ -10,13 +10,11 @@ public class PlayerAnimation : MonoBehaviour
     [SerializeField]
     private Animator animator;
 
-    CharacterController playerController;
     PlayerController player;
 
     void Start()
     {
         animator = GetComponent<Animator>();
-        playerController = GetComponentInParent<CharacterController>();
         player = GetComponentInParent<PlayerController>();
     }
 
@@ -31,13 +29,13 @@ public class PlayerAnimation : MonoBehaviour
 
     void IsGroundCheck()
     {
-        if (player.groundedPlayer)
+        if (player.groundedPlayer&& !player.jumpAction.triggered)
             animator.SetBool("isGround", true);
     }
 
     void PlayerShotAnim()
     {
-        if (player.shootAction.triggered)  
+        if (player.shootAction.triggered&&player.aimAction.IsPressed())
             animator.SetTrigger("shot");
     }
 
@@ -47,7 +45,7 @@ public class PlayerAnimation : MonoBehaviour
     }
     void PlayerJumpAnim()
     {
-        if (!player.groundedPlayer)
+        if (player.jumpAction.triggered)
             animator.SetTrigger("jump");
     }
 }

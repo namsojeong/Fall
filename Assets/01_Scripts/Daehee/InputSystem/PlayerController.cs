@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using Mono.Cecil;
 using UnityEngine.SceneManagement;
+using System.Security.Claims;
 
 [RequireComponent(typeof(CharacterController), typeof(PlayerInput))]
 public class PlayerController : MonoBehaviour
@@ -27,7 +28,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float playerStopSpeed = 0.0f;
     [SerializeField] private float jumpHeight = 1.0f;
     [SerializeField] private float gravityValue = -9.81f;
-    [SerializeField] private float rotationSpeed = 8f;
+    [SerializeField] private float rotationSpeed = 100f;
     [SerializeField] private bool isRun = false;
     [SerializeField] private float bulletHitMissDistance = 25f;
     private float bombPower;
@@ -40,7 +41,6 @@ public class PlayerController : MonoBehaviour
     public CharacterController controller;
     private PlayerInput input;
     private Vector3 playerVelocity;
-    public bool groundedPlayer;
     public GameObject model;
     public bool _isBoss = false;
     #region InputAction
@@ -57,7 +57,7 @@ public class PlayerController : MonoBehaviour
 
     private bool isBomb = false;
     private bool isLaser = false;
-    public bool isLooking = false;
+    public bool isAim;
 
     #region HP
 
@@ -74,9 +74,15 @@ public class PlayerController : MonoBehaviour
     [SerializeField] AudioClip playerAudio;
 
     #endregion
-
+    public bool groundedPlayer;
+    public bool jumpactionbool;
     private void Start()
     {
+        if(SceneManager.GetActiveScene().name == "Game")
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
         controller = GetComponent<CharacterController>();
         input= GetComponent<PlayerInput>();
         playerHP = GetComponent<CharacterHP>();
@@ -89,11 +95,23 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        isAim = aimAction.IsPressed();
+        groundedPlayer = controller.isGrounded;
+
         DefaultSetting();
+        if (jumpAction.triggered && groundedPlayer)
+        {
+            playerVelocity.y += Mathf.Sqrt(jumpHeight * -3.0f * gravityValue);
+        }
         if (SceneManager.GetActiveScene().name == "DefaultGameScene")
         {
             DefaultSceneRotate();
             DefaultSceneMove();
+            if (shootAction.triggered)
+            {
+                SoundManager.instance.SFXPlay(gunSound, playerAudio);
+                DefaultSceneShootGun();
+            }
         }
         else
         {
@@ -104,26 +122,26 @@ public class PlayerController : MonoBehaviour
             {
                 playerHP.ReviveHP();
             }
+            if (shootAction.triggered && isAim)
+            {
+                SoundManager.instance.SFXPlay(gunSound, playerAudio);
+                GameSceneShootGun();
+            }
         }
     }
 
     #region Setting
     void DefaultSetting()
     {
-        isLooking = aimAction.IsPressed();
         model.transform.position = transform.position;
         playerSpeed = Input.GetKey(KeyCode.LeftShift) ? playerRunSpeed : playerWalkSpeed;
 
-        groundedPlayer = controller.isGrounded;
         if (groundedPlayer && playerVelocity.y < 0)
         {
             playerVelocity.y = 0f;
         }
 
-        if (jumpAction.triggered && groundedPlayer)
-        {
-            playerVelocity.y += Mathf.Sqrt(jumpHeight * -3.0f * gravityValue);
-        }
+        
         if (isBomb)
         {
             playerVelocity.y = bombPower;
@@ -240,6 +258,7 @@ public class PlayerController : MonoBehaviour
         BulletController bulletController = bullet.GetComponent<BulletController>();
         if (Physics.Raycast(camTransform.position, camTransform.forward, out hit, Mathf.Infinity))
         {
+            Debug.Log(bulletController.target);
             bulletController.target = hit.point;
             bulletController.hit = true;
         }

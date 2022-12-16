@@ -30,31 +30,7 @@ public class RippleGenerator : MonoBehaviour {
         pivotTime = Time.time + Random.Range(-timeBetweenRippleDesv, timeBetweenRippleDesv);
 	}
 	
-	// Update is called once per frame
-	//void Update () {
- //       if(randomGeneration) { //Automatically generated ripple effects
- //           if (pivotTime + timeBetweenRippleMedian < Time.time) {
- //               pivotTime = Time.time + Random.Range(-timeBetweenRippleDesv, timeBetweenRippleDesv); ;
-
- //               //Set new ripple effect
- //               rippleCameraEffect.SetNewRipplePosition(new Vector2(Random.Range(0, Screen.width), Random.Range(0, Screen.height)));
- //           }
- //       }
- //       else { //User provided coordinates
- //           if (pivotTime + timeBetweenRippleMedian < Time.time) {
- //               pivotTime = Time.time + Random.Range(-timeBetweenRippleDesv, timeBetweenRippleDesv); ;
-
- //               //In case array has not been set on inspector
- //               if (targetPosition.Count <= 0) return;
-                
- //               //Set new ripple effect
- //               //rippleCameraEffect.SetNewRipplePosition(targetPosition[(currentID < targetPosition.Count) ? currentID++ : targetPosition.Count -1]);
- //               //currentID = (currentID > targetPosition.Count - 1) ? 0 : currentID; //Clamp currentID
- //           }
- //       }
-	//}
-
-    //Adds new position to the position list array
+	
     public void AddTargetPosition(Vector2 _targetPos) {
         targetPosition.Add(_targetPos); //Add new position to list
     }
