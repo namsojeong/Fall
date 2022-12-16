@@ -4,15 +4,12 @@ using UnityEngine;
 
 public class BossMonster : MonoBehaviour
 {
-    [SerializeField] Canvas bossUI;
-    private CharacterHP monsterHP;
+    //[SerializeField] Canvas bossUI;
     private FlashHit hitFlash;
 
     private void Awake()
     {
         hitFlash = GetComponent<FlashHit>();
-        monsterHP = GetComponent<CharacterHP>();
-
     }
 
     private void Start()
@@ -20,27 +17,10 @@ public class BossMonster : MonoBehaviour
         UI.Instance.SetCursor(true);
     }
 
-    private void Die()
-    {
-        Debug.Log("Boss_Die");
-        bossUI.gameObject.SetActive(false);
-        StartCoroutine(GameClear());
-    }
-
-    IEnumerator GameClear()
-    {
-        yield return new WaitForSeconds(1f);
-        UI.Instance.ChangeScene(SceneState.GAMEOVER);
-    }
-
-
     public void Hit()
     {
-        monsterHP.Hit(10);
-        if(monsterHP.IsDead)
-        {
-            Die();
-        }
+        Debug.Log("Hit2");
+        ScoreManager.Instance.AddScore(10);
         hitFlash.DamageEffect();
     }
 
@@ -48,6 +28,7 @@ public class BossMonster : MonoBehaviour
     {
         if(collision.gameObject.tag=="Monster")
         {
+        Debug.Log("Hit");
             Hit();
         }
     }

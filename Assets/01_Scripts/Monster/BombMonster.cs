@@ -38,7 +38,7 @@ public class BombMonster : MonoBehaviour
     private float colRadius = 100f;
     private int attackPower = 20;
     private float bombPower = 1000.0f;
-    private float bombDistance = 10.0f;
+    private float bombDistance = 20.0f;
 
     private FlashHit hitFlash;
 
@@ -217,14 +217,9 @@ public class BombMonster : MonoBehaviour
 
     #region ATTACK
 
-
     private void Attack_Enter()
     {
         AnimationPlay(hashAttack, true);
-    }
-
-    private void Attack_Update()
-    {
     }
 
     private void Attack_Exit()
