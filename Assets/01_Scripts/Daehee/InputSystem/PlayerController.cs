@@ -41,7 +41,7 @@ public class PlayerController : MonoBehaviour
 
     private PlayerInput input;
     private Vector3 playerVelocity;
-    private Rigidbody playerRigidbody;
+    private Rigidbody rigid;
     public GameObject model;
     public Transform FallPos;
     public bool _isBoss = false;
@@ -88,7 +88,7 @@ public class PlayerController : MonoBehaviour
         }
         input= GetComponent<PlayerInput>();
         playerHP = GetComponent<CharacterHP>();
-        playerRigidbody = GetComponent<Rigidbody>();
+        rigid = GetComponent<Rigidbody>();
         camTransform = Camera.main.transform;
         moveAction = input.actions["Move"];
         jumpAction = input.actions["Jump"];
@@ -102,7 +102,7 @@ public class PlayerController : MonoBehaviour
         DefaultSetting();
         if (jumpAction.triggered && isGround)
         {
-            playerRigidbody.AddForce(Vector3.up * 300f);
+            rigid.AddForce(Vector3.up * 300f);
         }
         if (SceneManager.GetActiveScene().name == "DefaultGameScene")
         {
@@ -239,7 +239,9 @@ public class PlayerController : MonoBehaviour
         RaycastHit hit;
         GameObject bullet = Instantiate(bulletPrefab, transform.position + Vector3.up, Quaternion.identity);
         BulletController bulletController = bullet.GetComponent<BulletController>();
-        if (Physics.Raycast(transform.position + Vector3.up, transform.forward, out hit, Mathf.Infinity))
+        Vector3 playerpos = Camera.main.WorldToScreenPoint(transform.position);
+        Vector3 mousepos = Camera.main.WorldToScreenPoint(Input.mousePosition);
+        if (Physics.Raycast(transform.position + Vector3.up, mousepos- playerpos, out hit, Mathf.Infinity))
         {
             bulletController.target = hit.point;
             bulletController.hit = true;
@@ -284,8 +286,8 @@ public class PlayerController : MonoBehaviour
     public void Bomb(int damage, float bombPower)
     {
         isBomb = true;
+        rigid.AddForce(Vector3.up * bombPower);
         Hit(damage);
-        playerVelocity.y = bombPower;
         Debug.Log("Bomb");
     }
 

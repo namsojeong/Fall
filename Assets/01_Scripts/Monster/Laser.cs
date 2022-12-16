@@ -22,6 +22,8 @@ public class Laser : MonoBehaviour
     private float delay = 2f;
     int index = 0;
 
+    bool isHit = false;
+
     private void Awake()
     {
         line = GetComponent<LineRenderer>();
@@ -43,23 +45,22 @@ public class Laser : MonoBehaviour
         Debug.DrawRay(startPos, dir*100f, Color.red);
         if (Physics.Raycast(startPos, dir, out hit, 100f, playerLayer))
         {
-
+            if (isHit) return;
             Collider[] cols = Physics.OverlapSphere(hit.transform.position, 100f, playerLayer);
             if (cols.Length > 0)
             {
                 line.SetColors(Color.red, Color.red);
-            PlayerController.Instance.SlowSpeed(true);
+                StartCoroutine(LaserHit());
             }
             else
             {
                 line.SetColors(Color.cyan, Color.cyan);
-            PlayerController.Instance.SlowSpeed(false);
             }
         }
         else
         {
             line.SetColors(Color.cyan, Color.cyan);
-            PlayerController.Instance.SlowSpeed(false);
+            
         }
         line.SetPosition(1, endPos);
         LaserEffect();
@@ -81,6 +82,14 @@ public class Laser : MonoBehaviour
             SoundManager.Instance.LaserPlay(laserSound);
         }
 
+    }
+
+    IEnumerator LaserHit()
+    {
+        PlayerController.Instance.Hit(5);
+        isHit = true;
+        yield return new WaitForSeconds(delay);
+        isHit = false;
     }
 
 }

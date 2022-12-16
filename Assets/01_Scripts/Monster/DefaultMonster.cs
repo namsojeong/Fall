@@ -1,12 +1,11 @@
 using DG.Tweening;
 using MonsterLove.StateMachine;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class BombMonster : MonoBehaviour
+public class DefaultMonster : MonoBehaviour
 {
 
     public enum States
@@ -34,8 +33,8 @@ public class BombMonster : MonoBehaviour
 
     private float moveSpeed = 5.0f;
     private float moveRange = 50.0f;
-    private float attackRange = 5.0f;
-    private float colRadius = 100f;
+    private float attackRange = 3.0f;
+    private float colRadius = 1000f;
     private int attackPower = 20;
     private float bombPower = 1000.0f;
     private float bombDistance = 10.0f;
@@ -47,7 +46,7 @@ public class BombMonster : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         rigid = GetComponent<Rigidbody>();
         anim = GetComponent<Animator>();
-        collider = GetComponent<Collider>();
+        collider = GetComponent<CapsuleCollider>();
         hitFlash = GetComponent<FlashHit>();
 
         target = SearchTarget();
@@ -73,7 +72,11 @@ public class BombMonster : MonoBehaviour
     public Vector3 dir => GetDirection();
 
     // 타겟과의 거리 구하기
-    private float GetDistance() { return Vector3.Distance(transform.position, target.position); }
+    private float GetDistance() 
+    {
+        SearchTarget();
+        return Vector3.Distance(transform.position, target.position); 
+    }
 
     // 타겟과의 방향 구하기
     private Vector3 GetDirection()
@@ -132,7 +135,7 @@ public class BombMonster : MonoBehaviour
     {
 
     }
-        
+
     private void CheckDistanceIdle()
     {
         if (distance <= attackRange)
@@ -156,7 +159,7 @@ public class BombMonster : MonoBehaviour
 
     private void SetMove(bool isMove)
     {
-            agent.isStopped = !isMove;
+        agent.isStopped = !isMove;
     }
     private void Move()
     {
@@ -235,9 +238,9 @@ public class BombMonster : MonoBehaviour
     public void Attack()
     {
         Collider[] cols = Physics.OverlapSphere(transform.position, attackRange, targetLayerMask);
-        if (cols.Length>0)
+        if (cols.Length > 0)
         {
-            cols[0].gameObject.GetComponent<PlayerController>()?.Bomb(attackPower, bombPower);
+            cols[0].gameObject.GetComponent<Rigidbody>()?.AddForce(Vector3.up * 1000.0f);
         }
     }
 
@@ -264,9 +267,8 @@ public class BombMonster : MonoBehaviour
 
     private void MonsterDie()
     {
-        ObjectPool.Instance.ReturnObject(PoolObjectType.BOMB_MONSTER, gameObject);
+        ObjectPool.Instance.ReturnObject(PoolObjectType.Bomb_DefaultMonster, gameObject);
     }
 
     #endregion
-
 }
