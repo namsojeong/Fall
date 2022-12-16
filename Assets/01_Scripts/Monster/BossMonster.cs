@@ -34,14 +34,6 @@ public class BossMonster : MonoBehaviour
     }
 
 
-    private void Update()
-    {
-        if(Input.GetKeyDown(KeyCode.Space))
-        {
-            Hit();
-        }
-    }
-
     public void Hit()
     {
         monsterHP.Hit(10);
