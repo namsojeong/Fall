@@ -7,7 +7,7 @@ public class DefaultGameManager : MonoBehaviour
 {
     private void Start()
     {
-        GameTimeManager.Instance.StartTime(10);
+        GameTimeManager.Instance.StartTime(60);
     }
 
 }
