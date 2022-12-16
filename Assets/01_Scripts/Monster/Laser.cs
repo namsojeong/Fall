@@ -78,7 +78,7 @@ public class Laser : MonoBehaviour
         {
             index = Random.Range(0, laserPoint.Count);
             yield return new WaitForSeconds(delay);
-            SoundManager.Instance.SFXPlay(laserSound);
+            SoundManager.Instance.LaserPlay(laserSound);
         }
 
     }

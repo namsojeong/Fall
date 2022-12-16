@@ -8,7 +8,7 @@ using Mono.Cecil;
 using UnityEngine.SceneManagement;
 using System.Security.Claims;
 
-[RequireComponent(typeof(CharacterController), typeof(PlayerInput))]
+[RequireComponent(typeof(PlayerInput))]
 public class PlayerController : MonoBehaviour
 {
     public static PlayerController Instance { get; private set; }
@@ -38,11 +38,14 @@ public class PlayerController : MonoBehaviour
     public Transform firePos;
     private Transform camTransform;
 
-    public CharacterController controller;
     private PlayerInput input;
     private Vector3 playerVelocity;
+    private Rigidbody playerRigidbody;
     public GameObject model;
     public bool _isBoss = false;
+    public bool isGround;
+    private RaycastHit hit;
+    float hitMaxDist = 0.1f;
     #region InputAction
     private InputAction moveAction;
     public InputAction jumpAction;
@@ -73,7 +76,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] AudioClip playerAudio;
 
     #endregion
-    public bool groundedPlayer;
     public bool jumpactionbool;
     private void Start()
     {
@@ -82,9 +84,9 @@ public class PlayerController : MonoBehaviour
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
         }
-        controller = GetComponent<CharacterController>();
         input= GetComponent<PlayerInput>();
         playerHP = GetComponent<CharacterHP>();
+        playerRigidbody = GetComponent<Rigidbody>();
         camTransform = Camera.main.transform;
         moveAction = input.actions["Move"];
         jumpAction = input.actions["Jump"];
@@ -94,12 +96,11 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        groundedPlayer = controller.isGrounded;
-
+        isGround = CheckIsGround();
         DefaultSetting();
-        if (jumpAction.triggered && groundedPlayer)
+        if (jumpAction.triggered && isGround)
         {
-            playerVelocity.y += Mathf.Sqrt(jumpHeight * -3.0f * gravityValue);
+            playerRigidbody.AddForce(Vector3.up * 300f);
         }
         if (SceneManager.GetActiveScene().name == "DefaultGameScene")
         {
@@ -128,13 +129,23 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    public bool CheckIsGround()
+    {
+        Debug.DrawRay(transform.position, Vector3.down, Color.green);
+        if(Physics.Raycast(transform.position, Vector3.down, out hit, hitMaxDist))
+        {
+            return true;
+        }
+        return false;
+    }
+
     #region Setting
     void DefaultSetting()
     {
         model.transform.position = transform.position;
         playerSpeed = Input.GetKey(KeyCode.LeftShift) ? playerRunSpeed : playerWalkSpeed;
 
-        if (groundedPlayer && playerVelocity.y < 0)
+        if (CheckIsGround() && playerVelocity.y < 0)
         {
             playerVelocity.y = 0f;
         }
@@ -145,9 +156,7 @@ public class PlayerController : MonoBehaviour
             playerVelocity.y = bombPower;
         }
 
-        playerVelocity.y += gravityValue * Time.deltaTime;
 
-        controller.Move(playerVelocity * Time.deltaTime);
     }
     #endregion
 
@@ -193,7 +202,7 @@ public class PlayerController : MonoBehaviour
         }
         playerSpeed = speed;
 
-        controller.Move(move * Time.deltaTime * playerSpeed);
+        transform.position += move * Time.deltaTime * playerSpeed;
     }
 
     private void DefaultSceneMove()
@@ -214,7 +223,7 @@ public class PlayerController : MonoBehaviour
             speed = playerStopSpeed;
         }
         playerSpeed = speed;
-        controller.Move(move.normalized * (Time.deltaTime * playerSpeed));
+        transform.position += move.normalized * (Time.deltaTime * playerSpeed);
         if (aimAction.IsPressed())
         {
             SoundManager.Instance.SFXPlay(playerAudio);
