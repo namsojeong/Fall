@@ -37,6 +37,7 @@ public class RippleEffect : MonoBehaviour {
     //Used on detecting player input
     private bool playerClick;
     private Vector2 playerClickPosition;
+        private PlayerController playerController;
 
 	// Creates a private material used to the effect
 	void Awake () {
@@ -57,12 +58,14 @@ public class RippleEffect : MonoBehaviour {
 
         //Find the Shader
         material = new Material(Shader.Find("Hidden/RippleDiffuse"));
-	}
+            playerController = GameObject.Find("Player 1").GetComponent<PlayerController>();
+
+    }
 
     void Update() {
         if (detectClick) { //true -> Detect mouse left click / false -> Skip mouse click detection
 #if UNITY_EDITOR //Detect player input on editor
-            if (Input.GetMouseButtonDown(0)) {
+            if (playerController.aimAction.IsPressed()) {
                 playerClickPosition = Input.mousePosition;
                 playerClick = true;
                 //Debug.Log("Mouse Pos: " + Input.mousePosition);

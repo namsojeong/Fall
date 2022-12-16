@@ -35,7 +35,7 @@ public class PlayerAnimation : MonoBehaviour
 
     void PlayerShotAnim()
     {
-        if (player.shootAction.triggered)  
+        if (player.shootAction.triggered&&player.aimAction.IsPressed())
             animator.SetTrigger("shot");
     }
 

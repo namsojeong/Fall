@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using Mono.Cecil;
 using UnityEngine.SceneManagement;
+using System.Security.Claims;
 
 [RequireComponent(typeof(CharacterController), typeof(PlayerInput))]
 public class PlayerController : MonoBehaviour
@@ -40,7 +41,6 @@ public class PlayerController : MonoBehaviour
     public CharacterController controller;
     private PlayerInput input;
     private Vector3 playerVelocity;
-    public bool groundedPlayer;
     public GameObject model;
     public bool _isBoss = false;
     #region InputAction
@@ -57,7 +57,7 @@ public class PlayerController : MonoBehaviour
 
     private bool isBomb = false;
     private bool isLaser = false;
-    public bool isLooking = false;
+    public bool isAim;
 
     #region HP
 
@@ -74,7 +74,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] AudioClip playerAudio;
 
     #endregion
-
+    public bool groundedPlayer;
+    public bool jumpactionbool;
     private void Start()
     {
         if(SceneManager.GetActiveScene().name == "Game")
@@ -94,6 +95,7 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        isAim = aimAction.IsPressed();
         groundedPlayer = controller.isGrounded;
 
         DefaultSetting();
@@ -120,7 +122,7 @@ public class PlayerController : MonoBehaviour
             {
                 playerHP.ReviveHP();
             }
-            if (shootAction.triggered && isLooking)
+            if (shootAction.triggered && isAim)
             {
                 SoundManager.instance.SFXPlay(gunSound, playerAudio);
                 GameSceneShootGun();
@@ -131,7 +133,6 @@ public class PlayerController : MonoBehaviour
     #region Setting
     void DefaultSetting()
     {
-        isLooking = aimAction.IsPressed();
         model.transform.position = transform.position;
         playerSpeed = Input.GetKey(KeyCode.LeftShift) ? playerRunSpeed : playerWalkSpeed;
 
