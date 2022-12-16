@@ -28,7 +28,7 @@ public class ScoreManager : MonoBehaviour
     
     public void UpdateScoreUI()
     {
-        scoreText.text = $"Score :{GameManager.Instance.CurScore}";
+        scoreText.text = $"Score :{GameManager.Instance.Score}";
     }
     
 }

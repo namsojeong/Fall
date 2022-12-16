@@ -13,7 +13,6 @@ public class ObjectPool : MonoBehaviour
 
     private void Awake()
     {
-        DontDestroyOnLoad(gameObject);
         Instance = this;
 
         Initialize();

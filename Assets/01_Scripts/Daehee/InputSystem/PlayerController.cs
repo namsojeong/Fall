@@ -285,7 +285,7 @@ public class PlayerController : MonoBehaviour
         playerHP.Hit(damage);
         if (playerHP.IsDead)
         {
-            UI.Instance.ChangeScene("GameOver");
+            UI.Instance.ChangeScene(SceneState.GAMEOVER);
         }
     }
 

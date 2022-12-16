@@ -18,27 +18,15 @@ public class UI : MonoSingleton<UI>
     private void Awake()
     {
         //resumeBtn.onClick.AddListener(ESCout);
-        Debug.Log(resumeBtn);
     }
 
-    public void ESCin()
+    public void SetPause(bool isPause)
     {
-        pauseObj.SetActive(true);
-        if (!isPause)
-        {
-            Time.timeScale = 0;
-        }
+        pauseObj.SetActive(isPause);
+        if(isPause) Time.timeScale = 0;
+        else Time.timeScale = 1;
     }
 
-    public void ESCout()
-    {
-        pauseObj.SetActive(false);
-        if (isPause)
-        {
-            isPause = false;
-            Time.timeScale = 1;
-        }
-    }
     public void OffUI(GameObject ui)
     {
         ui.SetActive(false);
@@ -65,48 +53,12 @@ public class UI : MonoSingleton<UI>
 
     public void ChangeScene(SceneState scene)
     {
-        GameManager.Instance.SetSceneState(scene);
-        switch (scene)
-        {
-            case SceneState.START:
-                SceneManager.LoadScene("Start");
-                break;
-            case SceneState.BASIC_GAME:
-                SceneManager.LoadScene("DefaultGameScene");
-                break;
-            case SceneState.VS:
-                SceneManager.LoadScene("vs");
-                break;
-            case SceneState.BOSS_GAME:
-                SceneManager.LoadScene("BossScene");
-                break;
-            case SceneState.GAMEOVER:
-                SceneManager.LoadScene("GameOver");
-                break;
-        }
+        SetCursor(true);
+        SceneManager.LoadScene((int)scene);
     }
 
     public void ChangeScene(string scene)
     {
-        switch (scene)
-        {
-            case "Start":
-                GameManager.Instance.SetSceneState(SceneState.START);
-                break;
-            case "DefaultGameScene":
-                GameManager.Instance.SetSceneState(SceneState.BASIC_GAME);
-                break;
-            case "vs":
-                GameManager.Instance.SetSceneState(SceneState.VS);
-                break;
-            case "BossScene":
-                GameManager.Instance.SetSceneState(SceneState.BOSS_GAME);
-                break;
-            case "GameOver":
-                GameManager.Instance.SetSceneState(SceneState.GAMEOVER);
-                break;
-        }
-
         SceneManager.LoadScene(scene);
     }
 

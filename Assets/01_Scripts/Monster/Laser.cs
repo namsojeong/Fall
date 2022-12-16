@@ -10,7 +10,6 @@ public class Laser : MonoBehaviour
     public LayerMask playerLayer;
 
     public GameObject hitParticle;
-    public GameObject player;
     public List<Transform> laserPoint;
 
     private LineRenderer line;

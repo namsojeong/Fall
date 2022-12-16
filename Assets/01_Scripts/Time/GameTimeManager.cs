@@ -11,7 +11,7 @@ public class GameTimeManager : MonoSingleton<GameTimeManager>
     private float curTime = Define.GAME_TIME;
     private bool isStoppedTime = false;
 
-    public string endScene = "VS";
+    public string endScene = "vs";
     public void ResetGameTime()
     {
         curTime = Define.GAME_TIME;
@@ -23,25 +23,17 @@ public class GameTimeManager : MonoSingleton<GameTimeManager>
         isStoppedTime = false;
     }
 
-    private void Awake()
-    {
-    }
-
     private void Update()
     {
         if(Input.GetKeyDown(KeyCode.Escape))
         {
-            isStoppedTime = !isStoppedTime;
         }
-        if (!isStoppedTime)
-        {
             curTime -= Time.deltaTime;
             if(curTime <= 0)
             {
                 EndTime();
             }
             TimeUI();
-        }
     }
     private void TimeUI()
     {
@@ -50,16 +42,15 @@ public class GameTimeManager : MonoSingleton<GameTimeManager>
 
     private void EndTime()
     {
-        if(GameManager.Instance.GetSceneState() == SceneState.BASIC_GAME)
+        if(endScene == "Game")
         {
-            UI.Instance.SetCursor(true);
-        UI.Instance.ChangeScene("vs");
+            UI.Instance.SetCursor(false);
         }
         else
         {
-            UI.Instance.SetCursor(false);
-        UI.Instance.ChangeScene("GameOver");
+            UI.Instance.SetCursor(true);
         }
+        UI.Instance.ChangeScene(endScene);
 
     }
 

@@ -1,9 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class SoundManager : MonoSingleton<SoundManager>
 {
+    private void Awake()
+    {
+        DontDestroyOnLoad(gameObject);
+    }
+
     [SerializeField] private AudioSource bgm;
     [SerializeField] private AudioSource sfx;
     [SerializeField] private AudioSource click;

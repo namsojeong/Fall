@@ -10,8 +10,4 @@ public class DefaultGameManager : MonoBehaviour
         GameTimeManager.Instance.StartTime(3);
     }
 
-    void SceneVS()
-    {
-        SceneManager.LoadScene("vs");
-    }
 }

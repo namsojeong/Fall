@@ -4,7 +4,7 @@ using UnityEngine;
 
 public enum SceneState
 {
-    START,
+    START = 0,
     BASIC_GAME,
     VS,
     BOSS_GAME,
