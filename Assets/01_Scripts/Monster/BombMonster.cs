@@ -195,20 +195,11 @@ public class BombMonster : MonoBehaviour
     #endregion
 
     #region COLLISION
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if (collider.tag == "Bullet")
-        {
-            fsm.ChangeState(States.Hit);
-        }
-    }
-
+    
     private void OnCollisionEnter(Collision collision)
     {
         if(collision.collider.tag=="Bullet")
         {
-            Debug.Log("bbb");
             fsm.ChangeState(States.Hit);
         }
     }

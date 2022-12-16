@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BossMonster : MonoBehaviour
 {
-
+    [SerializeField] Canvas bossUI;
     private CharacterHP monsterHP;
     private FlashHit hitFlash;
 
@@ -22,8 +22,17 @@ public class BossMonster : MonoBehaviour
 
     private void Die()
     {
-        gameObject.SetActive(false);
+        Debug.Log("Boss_Die");
+        bossUI.gameObject.SetActive(false);
+        StartCoroutine(GameClear());
     }
+
+    IEnumerator GameClear()
+    {
+        yield return new WaitForSeconds(1f);
+        UI.Instance.ChangeScene(SceneState.GAMEOVER);
+    }
+
 
     private void Update()
     {
@@ -40,7 +49,6 @@ public class BossMonster : MonoBehaviour
         {
             Die();
         }
-        Debug.Log(monsterHP.HP);
         hitFlash.DamageEffect();
     }
 

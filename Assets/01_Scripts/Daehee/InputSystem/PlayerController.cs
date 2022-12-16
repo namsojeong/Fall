@@ -66,9 +66,6 @@ public class PlayerController : MonoBehaviour
     #region HP
 
     private CharacterHP playerHP;
-    public Image hpImage;
-    public Text hpText;
-    public float slideSpeed;
 
     #endregion
 
@@ -114,7 +111,6 @@ public class PlayerController : MonoBehaviour
         {
             GameSceneMove();
             GameSceneRotate();
-            HPSlide();
             if (Input.GetKeyDown(KeyCode.R))
             {
                 playerHP.ReviveHP();
@@ -290,12 +286,6 @@ public class PlayerController : MonoBehaviour
     #endregion
 
     #region HP
-
-    private void HPSlide()
-    {
-        hpText.text = String.Format($"{playerHP.HP}%");
-        hpImage.fillAmount = Mathf.Lerp(hpImage.fillAmount, playerHP.HP/playerHP.max_hp, Time.deltaTime * slideSpeed);
-    }
 
 
     public void Hit(int damage)
