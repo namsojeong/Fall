@@ -7,6 +7,7 @@ using UnityEngine.InputSystem;
 using Mono.Cecil;
 using UnityEngine.SceneManagement;
 using System.Security.Claims;
+using Cinemachine;
 
 [RequireComponent(typeof(PlayerInput))]
 public class PlayerController : MonoBehaviour
@@ -42,6 +43,7 @@ public class PlayerController : MonoBehaviour
     private Vector3 playerVelocity;
     private Rigidbody playerRigidbody;
     public GameObject model;
+    public Transform FallPos;
     public bool _isBoss = false;
     public bool isGround;
     private RaycastHit hit;
@@ -155,8 +157,6 @@ public class PlayerController : MonoBehaviour
         {
             playerVelocity.y = bombPower;
         }
-
-
     }
     #endregion
 
