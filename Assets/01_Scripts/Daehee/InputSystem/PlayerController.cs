@@ -40,7 +40,7 @@ public class PlayerController : MonoBehaviour
 
     private PlayerInput input;
     private Vector3 playerVelocity;
-    private Rigidbody playerRigidbody;
+    private Rigidbody rigid;
     public GameObject model;
     public bool _isBoss = false;
     public bool isGround;
@@ -86,7 +86,7 @@ public class PlayerController : MonoBehaviour
         }
         input= GetComponent<PlayerInput>();
         playerHP = GetComponent<CharacterHP>();
-        playerRigidbody = GetComponent<Rigidbody>();
+        rigid = GetComponent<Rigidbody>();
         camTransform = Camera.main.transform;
         moveAction = input.actions["Move"];
         jumpAction = input.actions["Jump"];
@@ -100,7 +100,7 @@ public class PlayerController : MonoBehaviour
         DefaultSetting();
         if (jumpAction.triggered && isGround)
         {
-            playerRigidbody.AddForce(Vector3.up * 300f);
+            rigid.AddForce(Vector3.up * 300f);
         }
         if (SceneManager.GetActiveScene().name == "DefaultGameScene")
         {
@@ -284,8 +284,8 @@ public class PlayerController : MonoBehaviour
     public void Bomb(int damage, float bombPower)
     {
         isBomb = true;
+        rigid.AddForce(Vector3.up * bombPower);
         Hit(damage);
-        playerVelocity.y = bombPower;
         Debug.Log("Bomb");
     }
 
