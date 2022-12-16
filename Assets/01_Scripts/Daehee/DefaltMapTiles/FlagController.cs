@@ -5,8 +5,8 @@ using UnityEngine.UI;
 
 public class FlagController : MonoSingleton<FlagController>
 {
+    [SerializeField] private GameObject gate;
     [SerializeField] private List<GameObject> _flagGrp;
-    [SerializeField] private bool isDone = false;
     [SerializeField] List<Sprite> batterySprites;
 
     private Image batteryUI;
@@ -15,15 +15,13 @@ public class FlagController : MonoSingleton<FlagController>
 
     void Start()
     {
-        isDone = GameManager.Instance.IsBoss;
-        batteryUI = GetComponent<Image>(); 
+        batteryUI = GetComponent<Image>();
+        gate.SetActive(false);
     }
 
     void Update()
     {
-        isDone = CheckIsDone();
-        if (isDone)
-            GameManager.Instance.IsBoss = isDone;
+        CheckIsDone();
     }
 
     public void AddBattery()
@@ -38,15 +36,20 @@ public class FlagController : MonoSingleton<FlagController>
     }
 
 
-    bool CheckIsDone()
+    private void CheckIsDone()
     {
         bool done = true;
         foreach (GameObject _flag in _flagGrp)
         {
-            if (_flag.activeInHierarchy)
+            if (_flag.activeSelf)
                 done = false;
         }
-        return done;
+        GameManager.Instance.IsBoss = done;
+
+        if (done)
+        {
+            gate.SetActive(true);
+        }
     }
 
 }

@@ -2,10 +2,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using Mono.Cecil;
-using UnityEngine.SceneManagement;
 using System.Security.Claims;
 using Cinemachine;
 
@@ -78,14 +78,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] AudioClip playerAudio;
 
     #endregion
+
     public bool jumpactionbool;
     private void Start()
     {
-        if(SceneManager.GetActiveScene().name == "Game")
-        {
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
-        }
         input= GetComponent<PlayerInput>();
         playerHP = GetComponent<CharacterHP>();
         rigid = GetComponent<Rigidbody>();
@@ -322,4 +318,12 @@ public class PlayerController : MonoBehaviour
     }
 
     #endregion
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if(collision.collider.tag == "Gate")
+        {
+            UI.Instance.ChangeScene(SceneState.VS);
+        }
+    }
 }
