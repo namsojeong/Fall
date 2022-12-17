@@ -22,11 +22,6 @@ public class CharacterHP : MonoBehaviour
         curhp = max_hp;
     }
 
-    private void Update()
-    {
-        HPSlide();
-    }
-
     public void Hit(int damage)
     {
         curhp -= damage;
@@ -43,7 +38,7 @@ public class CharacterHP : MonoBehaviour
     }
 
 
-    private void HPSlide()
+    public void HPSlide()
     {
         hpText.text = String.Format($"{curhp}%");
         hpImage.fillAmount = Mathf.Lerp(hpImage.fillAmount, curhp / max_hp, Time.deltaTime * slideSpeed);

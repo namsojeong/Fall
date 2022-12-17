@@ -1,152 +1,55 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
+using static UnityEditor.Progress;
 
-public class EventManager
+public class EventManager : MonoBehaviour
 {
-    private static Dictionary<int, Action> eventDictionary = new Dictionary<int, Action>();
+    private static Dictionary<string, Action<EventParam>> eventDictionary = new Dictionary<string, Action<EventParam>>();
 
-    public static void StartListening(int eventName, Action listener)
+    public static void StartListening(string eventName, Action<EventParam> listener)
     {
-        Action thisEvent;
-
+        Action<EventParam> thisEvent;
         if (eventDictionary.TryGetValue(eventName, out thisEvent))
         {
             thisEvent += listener;
             eventDictionary[eventName] = thisEvent;
         }
-
         else
         {
             eventDictionary.Add(eventName, listener);
         }
     }
 
-    public static void StopListening(int eventName, Action listener)
+    public static void StopListening(string eventName, Action<EventParam> listener)
     {
-        Action thisEvent;
-
+        Action<EventParam> thisEvent;
         if (eventDictionary.TryGetValue(eventName, out thisEvent))
         {
             thisEvent -= listener;
             eventDictionary[eventName] = thisEvent;
         }
-
         else
         {
             eventDictionary.Remove(eventName);
         }
     }
 
-    public static void TriggerEvent(int eventName)
+    public static void TriggerEvent(string eventName, EventParam eventParam)
     {
-        Action thisEvent;
-
+        Action<EventParam> thisEvent;
         if (eventDictionary.TryGetValue(eventName, out thisEvent))
         {
-            thisEvent?.Invoke();
-        }
-    }
-
-    public static void CheckActionListners()
-    {
-        foreach(var dict in eventDictionary)
-        {
-            Debug.Log(dict.Value?.GetInvocationList().Length);
+            thisEvent?.Invoke(eventParam);
         }
     }
 }
-
-public class EventManager<T>
+public struct EventParam
 {
-    private static Dictionary<int, Action<T>> eventDictionary = new Dictionary<int, Action<T>>();
-
-    public static void StartListening(int eventName, Action<T> listener)
-    {
-        Action<T> thisEvent;
-         
-        if (eventDictionary.TryGetValue(eventName, out thisEvent))
-        {
-            thisEvent += listener;
-            eventDictionary[eventName] = thisEvent;
-        }
-
-        else
-        {
-            eventDictionary.Add(eventName, listener);
-        }
-    }
-
-    public static void StopListening(int eventName, Action<T> listener)
-    {
-        Action<T> thisEvent;
-
-        if (eventDictionary.TryGetValue(eventName, out thisEvent))
-        {
-            thisEvent -= listener;
-            eventDictionary[eventName] = thisEvent;
-        }
-
-        else
-        {
-            eventDictionary.Remove(eventName);
-        }
-    }
-
-    public static void TriggerEvent(int eventName, T param)
-    {
-        Action<T> thisEvent;
-
-        if (eventDictionary.TryGetValue(eventName, out thisEvent))
-        {
-            thisEvent?.Invoke(param);
-        }
-    }
-}
-
-public class EventManager<T, Q>
-{
-    private static Dictionary<int, Action<T, Q>> eventDictionary = new Dictionary<int, Action<T, Q>>();
-
-    public static void StartListening(int eventName, Action<T, Q> listener)
-    {
-        Action<T, Q> thisEvent;
-
-        if (eventDictionary.TryGetValue(eventName, out thisEvent))
-        {
-            thisEvent += listener;
-            eventDictionary[eventName] = thisEvent;
-        }
-
-        else
-        {
-            eventDictionary.Add(eventName, listener);
-        }
-    }
-
-    public static void StopListening(int eventName, Action<T, Q> listener)
-    {
-        Action<T, Q> thisEvent;
-
-        if (eventDictionary.TryGetValue(eventName, out thisEvent))
-        {
-            thisEvent -= listener;
-            eventDictionary[eventName] = thisEvent;
-        }
-
-        else
-        {
-            eventDictionary.Remove(eventName);
-        }
-    }
-
-    public static void TriggerEvent(int eventName, T param, Q param2)
-    {
-        Action<T, Q> thisEvent;
-
-        if (eventDictionary.TryGetValue(eventName, out thisEvent))
-        {
-            thisEvent?.Invoke(param, param2);
-        }
-    }
+    public Vector2 vectorParam;
+    public Item itemParam;
+    public bool boolParam;
+    public bool boolParam2;
+    public int intParam;
+    public string stringParam;
 }

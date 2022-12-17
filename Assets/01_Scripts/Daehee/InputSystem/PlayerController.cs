@@ -66,6 +66,7 @@ public class PlayerController : MonoBehaviour
     #region HP
 
     private CharacterHP playerHP;
+    public bool isDefault = true;
 
     #endregion
 
@@ -97,7 +98,7 @@ public class PlayerController : MonoBehaviour
         {
             rigid.AddForce(Vector3.up * 300f);
         }
-        if (SceneManager.GetActiveScene().name == "DefaultGameScene")
+        if (isDefault)
         {
             DefaultSceneRotate();
             DefaultSceneMove();
@@ -111,6 +112,7 @@ public class PlayerController : MonoBehaviour
         {
             GameSceneMove();
             GameSceneRotate();
+            playerHP.HPSlide();
             if (Input.GetKeyDown(KeyCode.R))
             {
                 playerHP.ReviveHP();
@@ -293,6 +295,7 @@ public class PlayerController : MonoBehaviour
         playerHP.Hit(damage);
         if (playerHP.IsDead)
         {
+            ScoreManager.Instance.SaveScore();
             UI.Instance.ChangeScene(SceneState.GAMEOVER);
         }
     }

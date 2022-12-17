@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class MonsterSpawner : MonoBehaviour
 {
-    private float spawnDelay = 5f;
+    public float spawnDelay = 5f;
 
     public bool isDefault=true;
 
@@ -24,7 +24,7 @@ public class MonsterSpawner : MonoBehaviour
         {
             yield return new WaitForSeconds(spawnDelay);
             SetMonster();
-
+            spawnDelay = Random.Range(2f, 10f);
         }
     }
 
@@ -36,6 +36,7 @@ public class MonsterSpawner : MonoBehaviour
         monster.transform.position = transform.position;
         monster.transform.parent = null;
         monster.transform.rotation = Quaternion.identity;
+
     } 
 
 }

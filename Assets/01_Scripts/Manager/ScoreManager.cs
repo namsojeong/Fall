@@ -18,17 +18,28 @@ public class ScoreManager : MonoSingleton<ScoreManager>
     private void ResetScore()
     {
         score = 0;
+        GetScore();
     }
 
-    private void SaveScore()
+    public void SaveScore()
     {
-
+        PlayerPrefs.SetInt("SCORE", score);
+        PlayerPrefs.SetInt("BEST_SCORE", bestScore);
+    }
+    private void GetScore()
+    {
+        score = PlayerPrefs.GetInt("SCORE", 0);
+        bestScore = PlayerPrefs.GetInt("BEST_SCORE", 0);
     }
 
     public void AddScore(int addScore)
     {
         score += addScore;
-        Debug.Log(score);
+        if(score > bestScore)
+        {
+            bestScore = score;
+            SaveScore();
+        }
         UpdateScoreUI();
     }
     

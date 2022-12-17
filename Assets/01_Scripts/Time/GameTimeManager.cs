@@ -25,15 +25,12 @@ public class GameTimeManager : MonoSingleton<GameTimeManager>
 
     private void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Escape))
-        {
-        }
-            curTime -= Time.deltaTime;
-            if(curTime <= 0)
-            {
-                EndTime();
-            }
-            TimeUI();
+         curTime -= Time.deltaTime;
+         if(curTime <= 0)
+         {
+             EndTime();
+         }
+         TimeUI();
     }
     private void TimeUI()
     {
