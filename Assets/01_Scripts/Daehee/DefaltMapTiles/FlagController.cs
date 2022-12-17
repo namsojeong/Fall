@@ -7,6 +7,7 @@ public class FlagController : MonoSingleton<FlagController>
 {
     [SerializeField] private GameObject gate;
     [SerializeField] private List<GameObject> _flagGrp;
+    [SerializeField] private List<AudioSource> audioSource;
     [SerializeField] List<Sprite> batterySprites;
 
     private Image batteryUI;
@@ -33,6 +34,7 @@ public class FlagController : MonoSingleton<FlagController>
 
     public void AddBattery()
     {
+        audioSource[curBattery].Play();
         curBattery++;
         UpdateBattery();
     }

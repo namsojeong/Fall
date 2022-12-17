@@ -26,6 +26,7 @@ public class DefaultMonster : MonoBehaviour
     NavMeshAgent agent;
     Rigidbody rigid;
     Collider collider;
+    AudioSource audio;
 
     // Layer
     public LayerMask targetLayerMask;
@@ -48,6 +49,7 @@ public class DefaultMonster : MonoBehaviour
         anim = GetComponent<Animator>();
         collider = GetComponent<CapsuleCollider>();
         hitFlash = GetComponent<FlashHit>();
+        audio = GetComponent<AudioSource>();
 
         target = SearchTarget();
         fsm = StateMachine<States>.Initialize(this, States.Idle);
@@ -209,6 +211,7 @@ public class DefaultMonster : MonoBehaviour
 
     private void Bomb()
     {
+            audio.Play();
         Vector3 direction = -dir.normalized;
         Vector3 destination = transform.position + transform.up * bombDistance + direction * bombDistance;
         agent.enabled = false;
@@ -240,6 +243,7 @@ public class DefaultMonster : MonoBehaviour
         Collider[] cols = Physics.OverlapSphere(transform.position, attackRange, targetLayerMask);
         if (cols.Length > 0)
         {
+            audio.Play();
             cols[0].gameObject.GetComponent<Rigidbody>()?.AddForce(Vector3.up * 1000.0f);
         }
     }

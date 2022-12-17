@@ -12,8 +12,8 @@ public class SoundManager : MonoSingleton<SoundManager>
 
     [SerializeField] private AudioSource bgm;
     [SerializeField] private AudioSource sfx;
-    [SerializeField] private AudioSource laser;
     [SerializeField] private AudioSource click;
+    [SerializeField] private AudioSource laser;
 
     public void SFXPlay(AudioClip audio)
     {
@@ -27,6 +27,10 @@ public class SoundManager : MonoSingleton<SoundManager>
         laser.clip = audio;
         laser.Play();
     }
+    
+
+
+
 
     public void BGMPlay(AudioClip audio)
     {

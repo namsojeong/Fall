@@ -99,14 +99,15 @@ public class PlayerController : MonoBehaviour
         GameSceneMove();
         GameSceneRotate();
         playerHP.HPSlide();
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            playerHP.ReviveHP();
-        }
         if (shootAction.triggered && aimAction.IsPressed())
         {
             SoundManager.Instance.SFXPlay(playerAudio);
             GameSceneShootGun();
+        }
+
+        if (transform.position.y <= -10f)
+        {
+            UI.Instance.ChangeScene(SceneState.GAMEOVER);
         }
     }
 

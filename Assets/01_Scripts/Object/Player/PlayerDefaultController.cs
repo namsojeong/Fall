@@ -56,11 +56,12 @@ public class PlayerDefaultController : MonoBehaviour
 
     #region Sound
 
+    [SerializeField] AudioSource walk;
     [SerializeField] AudioClip playerAudio;
+    [SerializeField] AudioClip doorSound;
     private string gunSound = "gun";
 
     #endregion
-
 
     private void Start()
     {
@@ -88,8 +89,11 @@ public class PlayerDefaultController : MonoBehaviour
         PlayerJumpAnim();
         PlayerShotAnim();
 
-        //if(shootAction.IsPressed())
-          //  Shoot();
+        if(transform.position.y <= -10f)
+        {
+            UI.Instance.ChangeScene(SceneState.GAMEOVER);
+        }
+
     }
 
     #region Move 
@@ -127,14 +131,17 @@ public class PlayerDefaultController : MonoBehaviour
         float speed;
         if (Input.GetKey(KeyCode.LeftShift) && move != Vector3.zero)
         {
+           WalkPlay(true, 3);
             speed = playerRunSpeed;
         }
         else if (move != Vector3.zero)
         {
+           WalkPlay(true, 2);
             speed = playerWalkSpeed;
         }
         else
         {
+            WalkPlay(false, 2);
             speed = playerStopSpeed;
         }
         playerSpeed = speed;
@@ -142,6 +149,19 @@ public class PlayerDefaultController : MonoBehaviour
         transform.position += move.normalized * (Time.deltaTime * playerSpeed);
     }
 
+    public void WalkPlay(bool isPlay, float pitch)
+    {
+        walk.pitch = pitch;
+        if (!isPlay)
+        {
+            walk.Stop();
+        }
+        else if (!walk.isPlaying)
+        {
+            walk.Play();
+
+        }
+    }
     #endregion
 
     #region Shoot
@@ -222,8 +242,15 @@ public class PlayerDefaultController : MonoBehaviour
     {
         if (collision.collider.tag == "Gate")
         {
-            UI.Instance.ChangeScene(SceneState.VS);
+            StartCoroutine(DoorDelay());
         }
+    }
+
+    private IEnumerator DoorDelay()
+    {
+        SoundManager.Instance.SFXPlay(doorSound);
+        yield return new WaitForSeconds(0.5f);
+        UI.Instance.ChangeScene(SceneState.VS);
     }
     #endregion
 }

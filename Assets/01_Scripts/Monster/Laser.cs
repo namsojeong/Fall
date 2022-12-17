@@ -6,7 +6,6 @@ using UnityEngine.InputSystem.HID;
 
 public class Laser : MonoBehaviour
 {
-    public AudioClip laserSound;
     public LayerMask playerLayer;
 
     public GameObject hitParticle;
@@ -27,10 +26,6 @@ public class Laser : MonoBehaviour
     private void Awake()
     {
         line = GetComponent<LineRenderer>();
-    }
-
-    private void OnEnable()
-    {
         startPos = transform.GetChild(0).position;
         StartCoroutine(SelectPoint());
     }
@@ -79,7 +74,6 @@ public class Laser : MonoBehaviour
         {
             index = Random.Range(0, laserPoint.Count);
             yield return new WaitForSeconds(delay);
-            SoundManager.Instance.LaserPlay(laserSound);
         }
 
     }

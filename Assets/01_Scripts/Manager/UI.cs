@@ -62,4 +62,20 @@ public class UI : MonoSingleton<UI>
         SceneManager.LoadScene(scene);
     }
 
+    public void OnButtonEnter(Button isOver)
+    {
+        isOver.image.color = new Color(255, 255, 255);
+    }
+    public void OnButtonExit(Button isOver)
+    {
+        isOver.image.color =Color.white;
+    }
+    public void ExitGame()
+    {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit(); // 어플리케이션 종료
+#endif
+    }
 }

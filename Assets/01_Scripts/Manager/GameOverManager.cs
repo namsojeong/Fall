@@ -5,13 +5,49 @@ using UnityEngine.UI;
 
 public class GameOverManager : MonoBehaviour
 {
+    [SerializeField] AudioClip click;
+    [SerializeField] AudioClip enter;
+    [SerializeField] Button startButton;
+    [SerializeField] Button settingButton;
+    [SerializeField] Button quitButton;
     [SerializeField] Text scoreText;
     [SerializeField] Text bestScoreText;
-    [SerializeField] Button playButton;
 
     private void Awake()
     {
-        playButton.onClick.AddListener(() => OnPlay());
+        startButton.onClick.AddListener(() =>
+        {
+            SoundManager.Instance.ClickPlay(click);
+            OnPlay();
+        });
+        settingButton.onClick.AddListener(() =>
+        {
+            SoundManager.Instance.ClickPlay(click);
+        });
+        quitButton.onClick.AddListener(() =>
+        {
+            SoundManager.Instance.ClickPlay(click);
+            ExitGame();
+        });
+    }
+
+
+    public void OnButtonEnter(Button isOver)
+    {
+            SoundManager.Instance.ClickPlay(enter);
+        isOver.image.color = new Color(255, 255, 255);
+    }
+    public void OnButtonExit(Button isOver)
+    {
+        isOver.image.color = Color.white;
+    }
+    public void ExitGame()
+    {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit(); // 어플리케이션 종료
+#endif
     }
 
     private void Start()
