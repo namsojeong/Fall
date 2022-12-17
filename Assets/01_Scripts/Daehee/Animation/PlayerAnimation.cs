@@ -28,7 +28,7 @@ public class PlayerAnimation : MonoBehaviour
 
     void IsGroundCheck()
     {
-        if (player.CheckIsGround() && !player.jumpAction.triggered)
+        if (player.groundedPlayer && !player.jumpAction.triggered)
             animator.SetBool("isGround", true);
     }
 
