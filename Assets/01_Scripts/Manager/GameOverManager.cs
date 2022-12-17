@@ -57,7 +57,7 @@ public class GameOverManager : MonoBehaviour
 
     private void UpdateScoreUI()
     {
-        scoreText.text = string.Format($"SCORE\v{PlayerPrefs.GetInt("SCORE")}");
+        scoreText.text = string.Format($"SCORE\n{PlayerPrefs.GetInt("SCORE")}");
         bestScoreText.text = string.Format($"BEST SCORE {PlayerPrefs.GetInt("BEST_SCORE")}");
     }
 

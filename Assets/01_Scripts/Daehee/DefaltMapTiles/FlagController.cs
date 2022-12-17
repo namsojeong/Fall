@@ -13,6 +13,10 @@ public class FlagController : MonoSingleton<FlagController>
     private Image batteryUI;
 
     private int curBattery = 0;
+    private void Awake()
+    {
+        EventManager.StartListening("BatterySound", OnBatterySound);
+    }
 
     void Start()
     {
@@ -34,7 +38,6 @@ public class FlagController : MonoSingleton<FlagController>
 
     public void AddBattery()
     {
-        audioSource[curBattery].Play();
         curBattery++;
         UpdateBattery();
     }
@@ -60,5 +63,13 @@ public class FlagController : MonoSingleton<FlagController>
             gate.SetActive(true);
         }
     }
+    private void OnBatterySound(EventParam eventParam)
+    {
+        audioSource[eventParam.intParam].Play();
+    }
 
+    private void OnDestroy()
+    {
+        EventManager.StopListening("BatterySound", OnBatterySound);
+    }
 }
