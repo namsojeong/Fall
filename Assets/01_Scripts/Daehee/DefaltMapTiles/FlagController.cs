@@ -1,33 +1,62 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class FlagController : MonoBehaviour
+public class FlagController : MonoSingleton<FlagController>
 {
+    [SerializeField] private GameObject gate;
     [SerializeField] private List<GameObject> _flagGrp;
-    [SerializeField] private bool isDone = false;
+    [SerializeField] List<Sprite> batterySprites;
+
+    private Image batteryUI;
+
+    private int curBattery = 0;
 
     void Start()
     {
-        isDone = GameManager.Instance.IsBoss;
+        batteryUI = GetComponent<Image>();
+        ResetBattery();
+        gate.SetActive(false);
     }
 
     void Update()
     {
-        isDone = CheckIsDone();
-        if (isDone)
-            GameManager.Instance.IsBoss = isDone;
+        CheckIsDone();
     }
 
-    bool CheckIsDone()
+    private void ResetBattery()
+    {
+        curBattery = 0;
+        UpdateBattery();
+    }
+
+    public void AddBattery()
+    {
+        curBattery++;
+        UpdateBattery();
+    }
+
+    private void UpdateBattery()
+    {
+        batteryUI.sprite = batterySprites[curBattery];
+    }
+
+
+    private void CheckIsDone()
     {
         bool done = true;
         foreach (GameObject _flag in _flagGrp)
         {
-            if (_flag.activeInHierarchy)
+            if (_flag.activeSelf)
                 done = false;
         }
-        return done;
+        GameManager.Instance.IsBoss = done;
+
+        if (done)
+        {
+            gate.SetActive(true);
+        }
     }
 
 }

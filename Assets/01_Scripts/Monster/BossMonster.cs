@@ -4,23 +4,27 @@ using UnityEngine;
 
 public class BossMonster : MonoBehaviour
 {
-
-    private CharacterHP monsterHP;
+    //[SerializeField] Canvas bossUI;
     private FlashHit hitFlash;
 
     private void Awake()
     {
         hitFlash = GetComponent<FlashHit>();
-        monsterHP = GetComponent<CharacterHP>();
-    }
-
-    private void Die()
-    {
-        
     }
 
     public void Hit()
     {
+        Debug.Log("Hit2");
+        ScoreManager.Instance.AddScore(10);
         hitFlash.DamageEffect();
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if(collision.gameObject.tag=="Monster")
+        {
+        Debug.Log("Hit");
+            Hit();
+        }
     }
 }

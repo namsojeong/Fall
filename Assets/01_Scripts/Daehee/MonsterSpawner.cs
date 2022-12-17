@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class MonsterSpawner : MonoBehaviour
 {
-    private float spawnDelay = 5f;
+    public float spawnDelay = 5f;
+
+    public bool isDefault=true;
 
     private void Start()
     {
@@ -22,16 +24,19 @@ public class MonsterSpawner : MonoBehaviour
         {
             yield return new WaitForSeconds(spawnDelay);
             SetMonster();
-
+            spawnDelay = Random.Range(2f, 10f);
         }
     }
 
     private void SetMonster()
     {
-        GameObject monster = ObjectPool.Instance.GetObject(PoolObjectType.BOMB_MONSTER);
+        GameObject monster;
+        if (isDefault)monster = ObjectPool.Instance.GetObject(PoolObjectType.Bomb_DefaultMonster);
+        else monster = ObjectPool.Instance.GetObject(PoolObjectType.BOMB_MONSTER);
         monster.transform.position = transform.position;
         monster.transform.parent = null;
         monster.transform.rotation = Quaternion.identity;
+
     } 
 
 }

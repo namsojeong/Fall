@@ -37,8 +37,8 @@ public class BombMonster : MonoBehaviour
     private float attackRange = 5.0f;
     private float colRadius = 100f;
     private int attackPower = 20;
-    private float bombPower = 20.0f;
-    private float bombDistance = 10.0f;
+    private float bombPower = 1000.0f;
+    private float bombDistance = 20.0f;
 
     private FlashHit hitFlash;
 
@@ -195,10 +195,10 @@ public class BombMonster : MonoBehaviour
     #endregion
 
     #region COLLISION
-
-    private void OnTriggerEnter(Collider other)
+    
+    private void OnCollisionEnter(Collision collision)
     {
-        if (collider.tag == "Bullet")
+        if(collision.collider.tag=="Bullet")
         {
             fsm.ChangeState(States.Hit);
         }
@@ -217,14 +217,9 @@ public class BombMonster : MonoBehaviour
 
     #region ATTACK
 
-
     private void Attack_Enter()
     {
         AnimationPlay(hashAttack, true);
-    }
-
-    private void Attack_Update()
-    {
     }
 
     private void Attack_Exit()
@@ -237,7 +232,7 @@ public class BombMonster : MonoBehaviour
         Collider[] cols = Physics.OverlapSphere(transform.position, attackRange, targetLayerMask);
         if (cols.Length>0)
         {
-            cols[0].gameObject.GetComponent<PlayerController>().Bomb(attackPower, bombPower);
+            cols[0].gameObject.GetComponent<PlayerController>()?.Bomb(attackPower, bombPower);
         }
     }
 

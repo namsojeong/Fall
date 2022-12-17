@@ -5,5 +5,6 @@ using UnityEngine;
 public enum PoolObjectType
 {
     BULLET,
+    Bomb_DefaultMonster,
     BOMB_MONSTER
 }
