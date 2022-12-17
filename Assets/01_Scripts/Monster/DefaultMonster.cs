@@ -34,9 +34,9 @@ public class DefaultMonster : MonoBehaviour
     private float moveSpeed = 5.0f;
     private float moveRange = 50.0f;
     private float attackRange = 3.0f;
-    private float colRadius = 1000f;
-    private int attackPower = 20;
-    private float bombPower = 1000.0f;
+    private float colRadius = 10000f;
+    private float attackPower = 20f;
+    private float bombPower = 200.0f;
     private float bombDistance = 10.0f;
 
     private FlashHit hitFlash;

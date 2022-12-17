@@ -10,26 +10,21 @@ public class PlayerAnimation : MonoBehaviour
     [SerializeField]
     private Animator animator;
     PlayerController player;
+    PlayerDefaultController playerDefault;
 
     void Start()
     {
         animator = GetComponent<Animator>();
         player = GetComponentInParent<PlayerController>();
+        playerDefault = GetComponentInParent<PlayerDefaultController>();
     }
 
 
     void Update()
     {
-        IsGroundCheck();
         PlayerMoveAnim();
         PlayerJumpAnim();
         PlayerShotAnim();
-    }
-
-    void IsGroundCheck()
-    {
-        if (player.CheckIsGround() && !player.jumpAction.triggered)
-            animator.SetBool("isGround", true);
     }
 
     void PlayerShotAnim()

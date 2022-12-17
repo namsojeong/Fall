@@ -39,7 +39,8 @@ public class GameTimeManager : MonoSingleton<GameTimeManager>
 
     private void EndTime()
     {
-        UI.Instance.ChangeScene(endScene);
+        UI.Instance.ChangeScene(SceneState.GAMEOVER);
+
 
     }
 

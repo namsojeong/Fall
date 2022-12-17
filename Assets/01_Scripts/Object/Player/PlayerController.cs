@@ -34,8 +34,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float bulletHitMissDistance = 25f;
     private float bombPower;
 
-    public GameObject bulletPrefab;
-    public Transform barrelTransform;
     public Transform firePos;
     private Transform camTransform;
 
@@ -66,7 +64,7 @@ public class PlayerController : MonoBehaviour
     #region HP
 
     private CharacterHP playerHP;
-    public bool isDefault = true;
+    private Animator anim;
 
     #endregion
 
@@ -80,8 +78,9 @@ public class PlayerController : MonoBehaviour
     public bool jumpactionbool;
     private void Start()
     {
-        input= GetComponent<PlayerInput>();
+        input = GetComponent<PlayerInput>();
         playerHP = GetComponent<CharacterHP>();
+        anim = GetComponentInChildren<Animator>();
         rigid = GetComponent<Rigidbody>();
         camTransform = Camera.main.transform;
         moveAction = input.actions["Move"];
@@ -94,46 +93,41 @@ public class PlayerController : MonoBehaviour
     {
         isGround = CheckIsGround();
         DefaultSetting();
+       
+        Jump();
+        AnimationStateCheck();
+        GameSceneMove();
+        GameSceneRotate();
+        playerHP.HPSlide();
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            playerHP.ReviveHP();
+        }
+        if (shootAction.triggered && aimAction.IsPressed())
+        {
+            SoundManager.Instance.SFXPlay(playerAudio);
+            GameSceneShootGun();
+        }
+    }
+
+    private void Jump()
+    {
         if (jumpAction.triggered && isGround)
         {
             rigid.AddForce(Vector3.up * 300f);
-        }
-        if (isDefault)
-        {
-            DefaultSceneRotate();
-            DefaultSceneMove();
-            if (shootAction.triggered)
-            {
-                SoundManager.Instance.SFXPlay(playerAudio);
-                DefaultSceneShootGun();
-            }
-        }
-        else
-        {
-            GameSceneMove();
-            GameSceneRotate();
-            playerHP.HPSlide();
-            if (Input.GetKeyDown(KeyCode.R))
-            {
-                playerHP.ReviveHP();
-            }
-            if (shootAction.triggered && aimAction.IsPressed())
-            {
-                SoundManager.Instance.SFXPlay(playerAudio);
-                GameSceneShootGun();
-            }
         }
     }
 
     public bool CheckIsGround()
     {
         Debug.DrawRay(transform.position, Vector3.down, Color.green);
-        if(Physics.Raycast(transform.position, Vector3.down, out hit, hitMaxDist))
+        if (Physics.Raycast(transform.position, Vector3.down, out hit, hitMaxDist))
         {
             return true;
         }
         return false;
     }
+
 
     #region Setting
     void DefaultSetting()
@@ -146,7 +140,7 @@ public class PlayerController : MonoBehaviour
             playerVelocity.y = 0f;
         }
 
-        
+
         if (isBomb)
         {
             playerVelocity.y = bombPower;
@@ -155,13 +149,6 @@ public class PlayerController : MonoBehaviour
     #endregion
 
     #region Rotate
-    private void DefaultSceneRotate()
-    {
-        playerPos = Camera.main.WorldToScreenPoint(transform.position);
-        radLook = Mathf.Atan2(Input.mousePosition.y - playerPos.y, Input.mousePosition.x - playerPos.x);
-        angle = radLook * Mathf.Rad2Deg;
-        transform.rotation = Quaternion.Euler(0, -angle + 120, 0);
-    }
     void GameSceneRotate()
     {
         Quaternion rotation = Quaternion.Euler(0, camTransform.eulerAngles.y, 0);
@@ -176,7 +163,7 @@ public class PlayerController : MonoBehaviour
         Vector3 move = new Vector3(input.x, 0, input.y);
         move = move.x * camTransform.right.normalized + move.z * camTransform.forward.normalized;
         move.y = 0;
-        
+
         float speed;
         if (Input.GetKey(KeyCode.LeftShift) && move != Vector3.zero)
         {
@@ -199,54 +186,10 @@ public class PlayerController : MonoBehaviour
         transform.position += move * Time.deltaTime * playerSpeed;
     }
 
-    private void DefaultSceneMove()
-    {
-        Vector2 input = moveAction.ReadValue<Vector2>();
-        Vector3 move = new Vector3(input.x, playerVelocity.y, input.y);
-        float speed;
-        if (Input.GetKey(KeyCode.LeftShift) && move != Vector3.zero)
-        {
-            speed = playerRunSpeed;
-        }
-        else if (move != Vector3.zero)
-        {
-            speed = playerWalkSpeed;
-        }
-        else
-        {
-            speed = playerStopSpeed;
-        }
-        playerSpeed = speed;
-        transform.position += move.normalized * (Time.deltaTime * playerSpeed);
-        if (aimAction.IsPressed())
-        {
-            SoundManager.Instance.SFXPlay(playerAudio);
-            DefaultSceneShootGun();
-        }
-    }
     #endregion
 
     #region Shoot
 
-    private void DefaultSceneShootGun()
-    {
-        RaycastHit hit;
-        GameObject bullet = Instantiate(bulletPrefab, transform.position + Vector3.up, Quaternion.identity);
-        BulletController bulletController = bullet.GetComponent<BulletController>();
-        Vector3 playerpos = Camera.main.WorldToScreenPoint(transform.position);
-        Vector3 mousepos = Camera.main.WorldToScreenPoint(Input.mousePosition);
-        if (Physics.Raycast(transform.position + Vector3.up, mousepos- playerpos, out hit, Mathf.Infinity))
-        {
-            bulletController.target = hit.point;
-            bulletController.hit = true;
-        }
-        else
-        {
-            bulletController.target = transform.position + transform.forward * 1000;
-            bulletController.hit = false;
-        }
-        Debug.Log("ASdfsdf");
-    }
     private void GameSceneShootGun()
     {
         Debug.Log("shoot");
@@ -269,7 +212,7 @@ public class PlayerController : MonoBehaviour
 
     private void SetBullet(GameObject bullet)
     {
-        bullet.transform.position = barrelTransform.position;
+        bullet.transform.position = firePos.position;
         bullet.transform.rotation = Quaternion.identity;
     }
 
@@ -311,11 +254,39 @@ public class PlayerController : MonoBehaviour
 
     #endregion
 
-    private void OnCollisionEnter(Collision collision)
+    #region ANIMATION
+
+    private void AnimationStateCheck()
     {
-        if(collision.collider.tag == "Gate")
+        CheckGround();
+        PlayerMoveAnim();
+        PlayerJumpAnim();
+        PlayerShotAnim();
+    }
+
+    private void CheckGround()
+    {
+        if (CheckIsGround() && !jumpAction.triggered)
         {
-            UI.Instance.ChangeScene(SceneState.VS);
+            anim.SetBool("isGround", true);
         }
     }
+
+    void PlayerShotAnim()
+    {
+        if (shootAction.triggered && aimAction.IsPressed())
+            anim.SetTrigger("shot");
+    }
+
+    void PlayerMoveAnim()
+    {
+        anim.SetFloat("speed", GetPlayerSpeed);
+    }
+    void PlayerJumpAnim()
+    {
+        if (jumpAction.triggered)
+            anim.SetTrigger("jump");
+    }
+    #endregion
+
 }

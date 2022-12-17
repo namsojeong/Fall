@@ -8,6 +8,8 @@ public class MonsterSpawner : MonoBehaviour
 
     public bool isDefault=true;
 
+    public List<Transform> spawnPoints;
+
     private void Start()
     {
         StartSpawn();
@@ -33,10 +35,11 @@ public class MonsterSpawner : MonoBehaviour
         GameObject monster;
         if (isDefault)monster = ObjectPool.Instance.GetObject(PoolObjectType.Bomb_DefaultMonster);
         else monster = ObjectPool.Instance.GetObject(PoolObjectType.BOMB_MONSTER);
-        monster.transform.position = transform.position;
+        monster.SetActive(false);
+        monster.transform.position = spawnPoints[Random.Range(0, spawnPoints.Count)].position;
         monster.transform.parent = null;
         monster.transform.rotation = Quaternion.identity;
-
+        monster.SetActive(true);
     } 
 
 }

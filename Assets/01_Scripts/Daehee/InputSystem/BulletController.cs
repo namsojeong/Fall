@@ -10,8 +10,14 @@ public class BulletController : MonoBehaviour
     private float speed = 50f;
     private float timeToDestroy = 3f;
 
+    private Rigidbody rigid;
     public Vector3 target { get; set; }
     public bool hit { get; set; }
+
+    private void Awake()
+    {
+        rigid = GetComponent<Rigidbody>();
+    }
 
     private void OnEnable()
     {
@@ -20,12 +26,11 @@ public class BulletController : MonoBehaviour
 
     private void Update()
     {
-        transform.position = Vector3.MoveTowards(transform.position,target, speed * Time.deltaTime);
+        transform.position = Vector3.MoveTowards(transform.position, target, Time.deltaTime * speed);
     }
 
-    private void OnCollisionEnter(Collision collision)
+    private void OnTriggerEnter(Collider other)
     {
-        ContactPoint contact = collision.GetContact(0);
         StopCoroutine(DeleteBullet());
         ObjectPool.Instance.ReturnObject(PoolObjectType.BULLET, gameObject);
     }
