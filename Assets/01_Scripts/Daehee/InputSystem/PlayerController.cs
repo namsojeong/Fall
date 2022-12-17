@@ -2,13 +2,14 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using Mono.Cecil;
-using UnityEngine.SceneManagement;
 using System.Security.Claims;
+using Cinemachine;
 
-[RequireComponent(typeof(CharacterController), typeof(PlayerInput))]
+[RequireComponent(typeof(PlayerInput))]
 public class PlayerController : MonoBehaviour
 {
     public static PlayerController Instance { get; private set; }
@@ -35,16 +36,18 @@ public class PlayerController : MonoBehaviour
 
     public GameObject bulletPrefab;
     public Transform barrelTransform;
-    public GameObject firePos;
+    public Transform firePos;
     private Transform camTransform;
 
-    public CharacterController controller;
     private PlayerInput input;
     private Vector3 playerVelocity;
+    private Rigidbody rigid;
     public GameObject model;
+    public Transform FallPos;
     public bool _isBoss = false;
-    [SerializeField] private Transform ShotDir;
-    private Vector3 a;
+    public bool isGround;
+    private RaycastHit hit;
+    float hitMaxDist = 0.1f;
     #region InputAction
     private InputAction moveAction;
     public InputAction jumpAction;
@@ -63,9 +66,7 @@ public class PlayerController : MonoBehaviour
     #region HP
 
     private CharacterHP playerHP;
-    public Image hpImage;
-    public Text hpText;
-    public float slideSpeed;
+    public bool isDefault = true;
 
     #endregion
 
@@ -75,19 +76,13 @@ public class PlayerController : MonoBehaviour
     [SerializeField] AudioClip playerAudio;
 
     #endregion
-    public bool groundedPlayer;
+
     public bool jumpactionbool;
     private void Start()
     {
-        if(SceneManager.GetActiveScene().name == "Game")
-        {
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
-        }
-        controller = GetComponent<CharacterController>();
         input= GetComponent<PlayerInput>();
         playerHP = GetComponent<CharacterHP>();
-        ShotDir = transform.GetChild(2).transform;
+        rigid = GetComponent<Rigidbody>();
         camTransform = Camera.main.transform;
         moveAction = input.actions["Move"];
         jumpAction = input.actions["Jump"];
@@ -97,15 +92,13 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        a = Quaternion.identity.eulerAngles + new Vector3(0, -55, 0);
-        groundedPlayer = controller.isGrounded;
-
+        isGround = CheckIsGround();
         DefaultSetting();
-        if (jumpAction.triggered && groundedPlayer)
+        if (jumpAction.triggered && isGround)
         {
-            playerVelocity.y += Mathf.Sqrt(jumpHeight * -3.0f * gravityValue);
+            rigid.AddForce(Vector3.up * 300f);
         }
-        if (SceneManager.GetActiveScene().name == "DefaultGameScene")
+        if (isDefault)
         {
             DefaultSceneRotate();
             DefaultSceneMove();
@@ -119,7 +112,7 @@ public class PlayerController : MonoBehaviour
         {
             GameSceneMove();
             GameSceneRotate();
-            HPSlide();
+            playerHP.HPSlide();
             if (Input.GetKeyDown(KeyCode.R))
             {
                 playerHP.ReviveHP();
@@ -132,13 +125,23 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    public bool CheckIsGround()
+    {
+        Debug.DrawRay(transform.position, Vector3.down, Color.green);
+        if(Physics.Raycast(transform.position, Vector3.down, out hit, hitMaxDist))
+        {
+            return true;
+        }
+        return false;
+    }
+
     #region Setting
     void DefaultSetting()
     {
         model.transform.position = transform.position;
         playerSpeed = Input.GetKey(KeyCode.LeftShift) ? playerRunSpeed : playerWalkSpeed;
 
-        if (groundedPlayer && playerVelocity.y < 0)
+        if (CheckIsGround() && playerVelocity.y < 0)
         {
             playerVelocity.y = 0f;
         }
@@ -148,10 +151,6 @@ public class PlayerController : MonoBehaviour
         {
             playerVelocity.y = bombPower;
         }
-
-        playerVelocity.y += gravityValue * Time.deltaTime;
-
-        controller.Move(playerVelocity * Time.deltaTime);
     }
     #endregion
 
@@ -197,7 +196,7 @@ public class PlayerController : MonoBehaviour
         }
         playerSpeed = speed;
 
-        controller.Move(move * Time.deltaTime * playerSpeed);
+        transform.position += move * Time.deltaTime * playerSpeed;
     }
 
     private void DefaultSceneMove()
@@ -218,7 +217,7 @@ public class PlayerController : MonoBehaviour
             speed = playerStopSpeed;
         }
         playerSpeed = speed;
-        controller.Move(move.normalized * (Time.deltaTime * playerSpeed));
+        transform.position += move.normalized * (Time.deltaTime * playerSpeed);
         if (aimAction.IsPressed())
         {
             SoundManager.Instance.SFXPlay(playerAudio);
@@ -234,9 +233,11 @@ public class PlayerController : MonoBehaviour
         RaycastHit hit;
         GameObject bullet = Instantiate(bulletPrefab, transform.position + Vector3.up, Quaternion.identity);
         BulletController bulletController = bullet.GetComponent<BulletController>();
-        if (Physics.Raycast(transform.position + Vector3.up, a, out hit, Mathf.Infinity))
+        Vector3 playerpos = Camera.main.WorldToScreenPoint(transform.position);
+        Vector3 mousepos = Camera.main.WorldToScreenPoint(Input.mousePosition);
+        if (Physics.Raycast(transform.position + Vector3.up, mousepos- playerpos, out hit, Mathf.Infinity))
         {
-            bulletController.target = transform.position + transform.forward * 1000;
+            bulletController.target = hit.point;
             bulletController.hit = true;
         }
         else
@@ -279,9 +280,8 @@ public class PlayerController : MonoBehaviour
     public void Bomb(int damage, float bombPower)
     {
         isBomb = true;
+        rigid.AddForce(Vector3.up * bombPower);
         Hit(damage);
-        playerVelocity.y = bombPower;
-        Debug.Log("Bomb");
     }
 
 
@@ -289,18 +289,13 @@ public class PlayerController : MonoBehaviour
 
     #region HP
 
-    private void HPSlide()
-    {
-        hpText.text = String.Format($"{playerHP.HP}%");
-        hpImage.fillAmount = Mathf.Lerp(hpImage.fillAmount, playerHP.HP/playerHP.max_hp, Time.deltaTime * slideSpeed);
-    }
-
 
     public void Hit(int damage)
     {
         playerHP.Hit(damage);
         if (playerHP.IsDead)
         {
+            ScoreManager.Instance.SaveScore();
             UI.Instance.ChangeScene(SceneState.GAMEOVER);
         }
     }
@@ -315,4 +310,12 @@ public class PlayerController : MonoBehaviour
     }
 
     #endregion
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if(collision.collider.tag == "Gate")
+        {
+            UI.Instance.ChangeScene(SceneState.VS);
+        }
+    }
 }
