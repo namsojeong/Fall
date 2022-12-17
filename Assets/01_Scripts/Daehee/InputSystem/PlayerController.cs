@@ -35,7 +35,7 @@ public class PlayerController : MonoBehaviour
 
     public GameObject bulletPrefab;
     public Transform barrelTransform;
-    public Transform firePos;
+    public GameObject firePos;
     private Transform camTransform;
 
     public CharacterController controller;
@@ -43,6 +43,8 @@ public class PlayerController : MonoBehaviour
     private Vector3 playerVelocity;
     public GameObject model;
     public bool _isBoss = false;
+    [SerializeField] private Transform ShotDir;
+    private Vector3 a;
     #region InputAction
     private InputAction moveAction;
     public InputAction jumpAction;
@@ -85,6 +87,7 @@ public class PlayerController : MonoBehaviour
         controller = GetComponent<CharacterController>();
         input= GetComponent<PlayerInput>();
         playerHP = GetComponent<CharacterHP>();
+        ShotDir = transform.GetChild(2).transform;
         camTransform = Camera.main.transform;
         moveAction = input.actions["Move"];
         jumpAction = input.actions["Jump"];
@@ -94,6 +97,7 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        a = Quaternion.identity.eulerAngles + new Vector3(0, -55, 0);
         groundedPlayer = controller.isGrounded;
 
         DefaultSetting();
@@ -230,9 +234,9 @@ public class PlayerController : MonoBehaviour
         RaycastHit hit;
         GameObject bullet = Instantiate(bulletPrefab, transform.position + Vector3.up, Quaternion.identity);
         BulletController bulletController = bullet.GetComponent<BulletController>();
-        if (Physics.Raycast(transform.position + Vector3.up, transform.forward, out hit, Mathf.Infinity))
+        if (Physics.Raycast(transform.position + Vector3.up, a, out hit, Mathf.Infinity))
         {
-            bulletController.target = hit.point;
+            bulletController.target = transform.position + transform.forward * 1000;
             bulletController.hit = true;
         }
         else
