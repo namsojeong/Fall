@@ -12,11 +12,6 @@ public class BossMonster : MonoBehaviour
         hitFlash = GetComponent<FlashHit>();
     }
 
-    private void Start()
-    {
-        UI.Instance.SetCursor(true);
-    }
-
     public void Hit()
     {
         Debug.Log("Hit2");

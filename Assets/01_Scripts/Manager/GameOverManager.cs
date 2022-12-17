@@ -7,10 +7,11 @@ public class GameOverManager : MonoBehaviour
 {
     [SerializeField] Text scoreText;
     [SerializeField] Text bestScoreText;
+    [SerializeField] Button playButton;
 
     private void Awake()
     {
-        UI.Instance.SetCursor(false);
+        playButton.onClick.AddListener(() => OnPlay());
     }
 
     private void Start()
@@ -22,5 +23,10 @@ public class GameOverManager : MonoBehaviour
     {
         scoreText.text = string.Format($"SCORE\v{PlayerPrefs.GetInt("SCORE")}");
         bestScoreText.text = string.Format($"BEST SCORE {PlayerPrefs.GetInt("BEST_SCORE")}");
+    }
+
+    private void OnPlay()
+    {
+        UI.Instance.ChangeScene(SceneState.BASIC_GAME);
     }
 }

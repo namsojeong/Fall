@@ -39,14 +39,6 @@ public class GameTimeManager : MonoSingleton<GameTimeManager>
 
     private void EndTime()
     {
-        if(endScene == "Game")
-        {
-            UI.Instance.SetCursor(false);
-        }
-        else
-        {
-            UI.Instance.SetCursor(true);
-        }
         UI.Instance.ChangeScene(endScene);
 
     }

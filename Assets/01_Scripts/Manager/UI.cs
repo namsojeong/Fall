@@ -11,7 +11,6 @@ public class UI : MonoSingleton<UI>
     public Button resumeBtn;
     public GameObject pauseObj;
     public Button settingBtn;
-    public TMP_Text curScoreText;
 
     private bool isPause = true;
 
@@ -53,7 +52,8 @@ public class UI : MonoSingleton<UI>
 
     public void ChangeScene(SceneState scene)
     {
-        SetCursor(true);
+        if (scene == SceneState.VS || scene == SceneState.BOSS_GAME) SetCursor(true);
+        else SetCursor(false);
         SceneManager.LoadScene((int)scene);
     }
 

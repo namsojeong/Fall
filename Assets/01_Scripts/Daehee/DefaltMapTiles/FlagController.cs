@@ -16,12 +16,19 @@ public class FlagController : MonoSingleton<FlagController>
     void Start()
     {
         batteryUI = GetComponent<Image>();
+        ResetBattery();
         gate.SetActive(false);
     }
 
     void Update()
     {
         CheckIsDone();
+    }
+
+    private void ResetBattery()
+    {
+        curBattery = 0;
+        UpdateBattery();
     }
 
     public void AddBattery()
