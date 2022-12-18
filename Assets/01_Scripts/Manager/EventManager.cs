@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
-using static UnityEditor.Progress;
 
 public class EventManager : MonoBehaviour
 {
@@ -47,7 +46,6 @@ public class EventManager : MonoBehaviour
 public struct EventParam
 {
     public Vector2 vectorParam;
-    public Item itemParam;
     public bool boolParam;
     public bool boolParam2;
     public int intParam;

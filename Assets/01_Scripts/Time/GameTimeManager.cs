@@ -6,10 +6,12 @@ using UnityEngine.UI;
 
 public class GameTimeManager : MonoSingleton<GameTimeManager>
 {
+
     public Text timeText;
 
     private float curTime = Define.GAME_TIME;
     private bool isStoppedTime = false;
+
 
     public string endScene = "vs";
     public void ResetGameTime()
@@ -19,6 +21,7 @@ public class GameTimeManager : MonoSingleton<GameTimeManager>
 
     public void StartTime(int setTime)
     {
+        ResetGameTime();
         curTime = setTime;
         isStoppedTime = false;
     }
@@ -39,9 +42,8 @@ public class GameTimeManager : MonoSingleton<GameTimeManager>
 
     private void EndTime()
     {
+        PlayerPrefs.SetInt("SCORE", 0);
         UI.Instance.ChangeScene(SceneState.GAMEOVER);
-
-
     }
 
 }

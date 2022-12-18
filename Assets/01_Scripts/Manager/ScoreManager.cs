@@ -1,10 +1,14 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ScoreManager : MonoSingleton<ScoreManager>
+public class ScoreManager : MonoBehaviour
 {
+    public static ScoreManager Instance => instance;
+    private static ScoreManager instance;
+
     [SerializeField] Text scoreText;
 
     int score = 0;
@@ -12,13 +16,19 @@ public class ScoreManager : MonoSingleton<ScoreManager>
 
     private void Awake()
     {
+        instance = this;
+        if(instance==null)
+        {
+            instance = GetComponent<ScoreManager>();
+        }
+
         ResetScore();
     }
 
     private void ResetScore()
     {
-        score = 0;
         GetScore();
+        score = 0;
     }
 
     public void SaveScore()
@@ -35,6 +45,7 @@ public class ScoreManager : MonoSingleton<ScoreManager>
     public void AddScore(int addScore)
     {
         score += addScore;
+        Debug.Log(score);
         if(score > bestScore)
         {
             bestScore = score;

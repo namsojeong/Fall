@@ -91,6 +91,7 @@ public class PlayerDefaultController : MonoBehaviour
 
         if(transform.position.y <= -10f)
         {
+            PlayerPrefs.SetInt("SCORE", 0);
             UI.Instance.ChangeScene(SceneState.GAMEOVER);
         }
 

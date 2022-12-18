@@ -107,7 +107,7 @@ public class PlayerController : MonoBehaviour
 
         if (transform.position.y <= -10f)
         {
-            UI.Instance.ChangeScene(SceneState.GAMEOVER);
+            Die();
         }
     }
 
@@ -239,9 +239,14 @@ public class PlayerController : MonoBehaviour
         playerHP.Hit(damage);
         if (playerHP.IsDead)
         {
+           Die();
+        }
+    }
+
+    private void Die()
+    {
             ScoreManager.Instance.SaveScore();
             UI.Instance.ChangeScene(SceneState.GAMEOVER);
-        }
     }
 
     #endregion
