@@ -5,9 +5,14 @@ using UnityEngine.SceneManagement;
 
 public class DefaultGameManager : MonoBehaviour
 {
+    GameTimeManager gameTimeManager;
+    private void Awake()
+    {
+        gameTimeManager = GetComponent<GameTimeManager>();
+    }
     private void Start()
     {
-        GameTimeManager.Instance.StartTime(60);
+        gameTimeManager.StartTime(60);
     }
 
 }

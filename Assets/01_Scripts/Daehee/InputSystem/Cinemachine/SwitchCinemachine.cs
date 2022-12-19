@@ -16,12 +16,11 @@ public class SwitchCinemachine : MonoBehaviour
     [SerializeField]
     private Canvas aimCanvas;
 
-
     public static CinemachineVirtualCamera vCam;
-    private InputAction aimAction;
+        private InputAction aimAction;
+
     void Awake()
     {
-        
         vCam = GetComponent<CinemachineVirtualCamera>();
         aimAction = input.actions["Aim"];
     }

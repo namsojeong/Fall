@@ -26,7 +26,7 @@ public class MonsterSpawner : MonoBehaviour
         {
             yield return new WaitForSeconds(spawnDelay);
             SetMonster();
-            spawnDelay = Random.Range(2f, 10f);
+            spawnDelay = Random.Range(1.0f, 2.5f);
         }
     }
 

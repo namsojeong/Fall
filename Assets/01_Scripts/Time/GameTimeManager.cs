@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class GameTimeManager : MonoSingleton<GameTimeManager>
+public class GameTimeManager : MonoBehaviour
 {
 
     public Text timeText;
