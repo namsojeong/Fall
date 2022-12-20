@@ -39,8 +39,8 @@ public class SwitchCinemachine : MonoBehaviour
     private void CancelAim()
     {
         vCam.Priority += priorityBoostAmount;
-        aimCanvas.enabled = false;
         thirdPersonCanvas.enabled = true;
+        aimCanvas.enabled = false;
 
     }
 
