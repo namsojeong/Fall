@@ -10,9 +10,9 @@ public class BulletController : MonoBehaviour
     private float speed = 50f;
     private float timeToDestroy = 3f;
 
-    private Rigidbody rigid;
     public Vector3 target { get; set; }
     public bool hit { get; set; }
+    private Rigidbody rigid;
 
     private void Awake()
     {

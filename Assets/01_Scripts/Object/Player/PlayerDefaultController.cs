@@ -8,6 +8,7 @@ using UnityEngine.InputSystem;
 using Mono.Cecil;
 using System.Security.Claims;
 using Cinemachine;
+using DG.Tweening;
 
 [RequireComponent(typeof(PlayerInput))]
 
@@ -73,13 +74,11 @@ public class PlayerDefaultController : MonoBehaviour
         moveAction = input.actions["Move"];
         jumpAction = input.actions["Jump"];
         shootAction = input.actions["Shoot"];
-        aimAction = input.actions["Aim"];
     }
 
     void Update()
     {
         model.transform.position = transform.position;
-        PlayerRotate();
 
         if (jumpAction.triggered && CheckIsGround())
         {
@@ -101,13 +100,6 @@ public class PlayerDefaultController : MonoBehaviour
     }
 
     #region Move 
-    private void PlayerRotate()
-    {
-        Vector2 playerPos = Camera.main.WorldToScreenPoint(transform.position);
-        radLook = Mathf.Atan2(Input.mousePosition.y - playerPos.y, Input.mousePosition.x - playerPos.x);
-        angle = radLook * Mathf.Rad2Deg;
-        transform.rotation = Quaternion.Euler(0, -angle + 120, 0);
-    }
 
     public bool CheckIsGround()
     {
@@ -129,11 +121,12 @@ public class PlayerDefaultController : MonoBehaviour
     {
         Vector2 input = moveAction.ReadValue<Vector2>();
         Vector3 move = new Vector3(input.x, playerVelocity.y, input.y);
+        transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(move), 0.15f);
 
         float speed;
         if (Input.GetKey(KeyCode.LeftShift) && move != Vector3.zero)
         {
-           WalkPlay(true, 3);
+           WalkPlay(true, 2.5f);
             speed = playerRunSpeed;
         }
         else if (move != Vector3.zero)

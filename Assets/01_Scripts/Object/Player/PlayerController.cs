@@ -67,7 +67,7 @@ public class PlayerController : MonoBehaviour
 
     #endregion
 
-    #region Sound
+    #region EFFECT
 
     private string gunSound = "gun";
     [SerializeField] AudioClip playerAudio;
@@ -76,12 +76,11 @@ public class PlayerController : MonoBehaviour
 
     private void Start()
     {
-        camTransform = Camera.main.transform;
-
         input = GetComponent<PlayerInput>();
         playerHP = GetComponent<CharacterHP>();
         anim = GetComponentInChildren<Animator>();
         rigid = GetComponent<Rigidbody>();
+        camTransform = Camera.main.transform;
 
         moveAction = input.actions["Move"];
         jumpAction = input.actions["Jump"];
@@ -158,6 +157,7 @@ public class PlayerController : MonoBehaviour
     {
         Vector2 input = moveAction.ReadValue<Vector2>();
         Vector3 move = new Vector3(input.x, 0, input.y);
+        transform.rotation = Quaternion.Slerp(transform.rotation, camTransform.rotation, 0.15f);
         move = move.x * camTransform.right.normalized + move.z * camTransform.forward.normalized;
         move.y = 0;
 
@@ -195,7 +195,6 @@ public class PlayerController : MonoBehaviour
         BulletController bulletController = bullet.GetComponent<BulletController>();
         if (Physics.Raycast(camTransform.position, camTransform.forward, out hit, Mathf.Infinity))
         {
-            Debug.Log(bulletController.target);
             bulletController.target = hit.point;
             bulletController.hit = true;
         }
