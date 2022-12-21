@@ -40,15 +40,12 @@ public class DefaultMonster : MonoBehaviour
     private float bombPower = 200.0f;
     private float bombDistance = 10.0f;
 
-    private FlashHit hitFlash;
-
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
         rigid = GetComponent<Rigidbody>();
         anim = GetComponent<Animator>();
         collider = GetComponent<CapsuleCollider>();
-        hitFlash = GetComponent<FlashHit>();
         audio = GetComponent<AudioSource>();
 
         target = SearchTarget();
@@ -133,10 +130,6 @@ public class DefaultMonster : MonoBehaviour
     #endregion
 
     #region IDLE
-    private void Idle_Enter()
-    {
-
-    }
 
     private void CheckDistanceIdle()
     {
@@ -165,7 +158,7 @@ public class DefaultMonster : MonoBehaviour
     }
     private void Move()
     {
-        if (target == null) return;
+        if (target.Equals(null)) return;
         LookTarget(target);
         agent.SetDestination(target.position);
     }
@@ -187,7 +180,6 @@ public class DefaultMonster : MonoBehaviour
     private void Walk_Update()
     {
         CheckDistanceWalk();
-
         Move();
     }
 
@@ -203,7 +195,7 @@ public class DefaultMonster : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (collider.tag == "Bullet")
+        if (collider.CompareTag("Bullet"))
         {
             fsm.ChangeState(States.Hit);
         }
@@ -211,7 +203,7 @@ public class DefaultMonster : MonoBehaviour
 
     private void Bomb()
     {
-            audio.Play();
+        audio.Play();
         Vector3 direction = -dir.normalized;
         Vector3 destination = transform.position + transform.up * bombDistance + direction * bombDistance;
         agent.enabled = false;
@@ -223,14 +215,9 @@ public class DefaultMonster : MonoBehaviour
 
     #region ATTACK
 
-
     private void Attack_Enter()
     {
         AnimationPlay(hashAttack, true);
-    }
-
-    private void Attack_Update()
-    {
     }
 
     private void Attack_Exit()
@@ -255,7 +242,6 @@ public class DefaultMonster : MonoBehaviour
     private void Hit_Enter()
     {
         AnimationPlay(hashHit, true);
-        hitFlash.DamageEffect();
         Bomb();
     }
 

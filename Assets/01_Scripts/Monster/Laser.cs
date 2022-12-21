@@ -12,20 +12,22 @@ public class Laser : MonoBehaviour
     public List<Transform> laserPoint;
 
     private LineRenderer line;
+    private Material material;
     private  RaycastHit hit;
     private  Vector3 endPos = Vector3.zero;
     private Vector3 startPos;
 
-    private float laserSpeed = 2f;
-    private float slowSpeed;
-    private float delay = 2f;
-    int index = 0;
+    private Color setColor = Color.cyan;
 
-    bool isHit = false;
+    private float delay = 2f;
+    private int index = 0;
+
+    private bool isHit = false;
 
     private void Awake()
     {
         line = GetComponent<LineRenderer>();
+        material = line.material;
         startPos = transform.GetChild(0).position;
         StartCoroutine(SelectPoint());
     }
@@ -37,26 +39,25 @@ public class Laser : MonoBehaviour
         endPos = Vector3.Lerp(endPos, laserPoint[index].position, Time.deltaTime);
         endPos.y = 0;
         Vector3 dir = endPos - startPos;
-        Debug.DrawRay(startPos, dir*100f, Color.red);
         if (Physics.Raycast(startPos, dir, out hit, 100f, playerLayer))
         {
             if (isHit) return;
             Collider[] cols = Physics.OverlapSphere(hit.transform.position, 100f, playerLayer);
             if (cols.Length > 0)
             {
-                line.SetColors(Color.red, Color.red);
+                setColor = Color.red;
                 StartCoroutine(LaserHit());
             }
             else
             {
-                line.SetColors(Color.cyan, Color.cyan);
+                setColor = Color.cyan;
             }
         }
         else
         {
-            line.SetColors(Color.cyan, Color.cyan);
-            
+            setColor = Color.cyan;
         }
+        line.SetColors(setColor, setColor);
         line.SetPosition(1, endPos);
         LaserEffect();
     }

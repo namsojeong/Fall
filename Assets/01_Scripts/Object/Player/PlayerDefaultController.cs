@@ -8,6 +8,7 @@ using UnityEngine.InputSystem;
 using Mono.Cecil;
 using System.Security.Claims;
 using Cinemachine;
+using DG.Tweening;
 
 [RequireComponent(typeof(PlayerInput))]
 
@@ -19,7 +20,6 @@ public class PlayerDefaultController : MonoBehaviour
     private Vector3 playerVelocity;
 
     private float hitMaxDist = 0.1f;
-    private float bombPower;
     private float radLook;
     private float angle;
 
@@ -74,20 +74,22 @@ public class PlayerDefaultController : MonoBehaviour
         moveAction = input.actions["Move"];
         jumpAction = input.actions["Jump"];
         shootAction = input.actions["Shoot"];
-        aimAction = input.actions["Aim"];
     }
 
     void Update()
     {
         model.transform.position = transform.position;
-        PlayerRotate();
-        Jump();
+
+        if (jumpAction.triggered && CheckIsGround())
+        {
+            Jump();
+        }
         Move();
 
         CheckGround();
         PlayerMoveAnim();
         PlayerJumpAnim();
-        PlayerShotAnim();
+        //PlayerShotAnim();
 
         if(transform.position.y <= -10f)
         {
@@ -98,13 +100,6 @@ public class PlayerDefaultController : MonoBehaviour
     }
 
     #region Move 
-    private void PlayerRotate()
-    {
-        Vector2 playerPos = Camera.main.WorldToScreenPoint(transform.position);
-        radLook = Mathf.Atan2(Input.mousePosition.y - playerPos.y, Input.mousePosition.x - playerPos.x);
-        angle = radLook * Mathf.Rad2Deg;
-        transform.rotation = Quaternion.Euler(0, -angle + 120, 0);
-    }
 
     public bool CheckIsGround()
     {
@@ -118,21 +113,20 @@ public class PlayerDefaultController : MonoBehaviour
 
  private void Jump()
     {
-        if (jumpAction.triggered && CheckIsGround())
-        {
+       
             rigid.AddForce(Vector3.up * 300f);
-        }
     }
 
     private void Move()
     {
         Vector2 input = moveAction.ReadValue<Vector2>();
         Vector3 move = new Vector3(input.x, playerVelocity.y, input.y);
+        transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(move), 0.15f);
 
         float speed;
         if (Input.GetKey(KeyCode.LeftShift) && move != Vector3.zero)
         {
-           WalkPlay(true, 3);
+           WalkPlay(true, 2.5f);
             speed = playerRunSpeed;
         }
         else if (move != Vector3.zero)
@@ -162,40 +156,6 @@ public class PlayerDefaultController : MonoBehaviour
             walk.Play();
 
         }
-    }
-    #endregion
-
-    #region Shoot
-
-    private void Shoot()
-    {
-        SoundManager.Instance.SFXPlay(playerAudio);
-        RaycastHit hit;
-
-        GameObject bullet = ObjectPool.Instance.GetObject(PoolObjectType.BULLET);
-        SetBullet(bullet);
-
-        BulletController bulletController = bullet.GetComponent<BulletController>();
-        Vector3 playerpos = Camera.main.WorldToScreenPoint(transform.position);
-        Vector3 mousepos = Camera.main.WorldToScreenPoint(Input.mousePosition);
-        if (Physics.Raycast(transform.position + Vector3.up, mousepos - playerpos, out hit, Mathf.Infinity))
-        {
-            bulletController.target = hit.point;
-            bulletController.hit = true;
-        }
-        else
-        {
-            bulletController.target = transform.position + transform.forward * 1000;
-            bulletController.hit = false;
-        }
-
-    }
-
-    private void SetBullet(GameObject bullet)
-    {
-        bullet.transform.position = firePos.transform.position;
-        bullet.transform.parent = null;
-        bullet.transform.rotation = firePos.rotation;
     }
 
     #endregion
@@ -241,7 +201,7 @@ public class PlayerDefaultController : MonoBehaviour
     #region Collision
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.collider.tag == "Gate")
+        if (collision.collider.CompareTag("Gate"))
         {
             StartCoroutine(DoorDelay());
         }

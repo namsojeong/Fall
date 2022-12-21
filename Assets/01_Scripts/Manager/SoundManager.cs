@@ -28,10 +28,6 @@ public class SoundManager : MonoSingleton<SoundManager>
         laser.Play();
     }
     
-
-
-
-
     public void BGMPlay(AudioClip audio)
     {
         bgm.Stop();

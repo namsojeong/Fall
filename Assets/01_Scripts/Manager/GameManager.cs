@@ -10,6 +10,7 @@ public class GameManager : MonoSingleton<GameManager>
     private void Awake()
     {
         DontDestroyOnLoad(gameObject);
+        UI.Instance.SetCursor(false);
     }
 
     [SerializeField] private bool isBoss = false;

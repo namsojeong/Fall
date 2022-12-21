@@ -8,12 +8,10 @@ public class GameTimeManager : MonoBehaviour
 {
 
     public Text timeText;
+    public string endScene = "vs";
 
     private float curTime = Define.GAME_TIME;
-    private bool isStoppedTime = false;
 
-
-    public string endScene = "vs";
     public void ResetGameTime()
     {
         curTime = Define.GAME_TIME;
@@ -23,20 +21,19 @@ public class GameTimeManager : MonoBehaviour
     {
         ResetGameTime();
         curTime = setTime;
-        isStoppedTime = false;
     }
 
     private void Update()
     {
-         curTime -= Time.deltaTime;
          if(curTime <= 0)
          {
              EndTime();
          }
-         TimeUI();
+        TimeUpdate();
     }
-    private void TimeUI()
+    private void TimeUpdate()
     {
+         curTime -= Time.deltaTime;
         timeText.text = string.Format($"{(int)curTime / 60}:{(int)curTime % 60}");
     }
 

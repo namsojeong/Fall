@@ -18,11 +18,8 @@ public class PlayerController : MonoBehaviour
     private float playerSpeed = 0f;
     public float GetPlayerSpeed => playerSpeed;
     public void SetPlayerSpeed(float value) => playerSpeed = value;
-    private Vector2 playerPos;
-    private float radLook;
-    private float angle;
 
-    #region WALK_BULLET
+    #region PLAYER
 
     [SerializeField] private float playerWalkSpeed = 10.0f;
     [SerializeField] private float playerRunSpeed = 20.0f;
@@ -30,52 +27,53 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float jumpHeight = 1.0f;
     [SerializeField] private float gravityValue = -9.81f;
     [SerializeField] private float rotationSpeed = 100f;
-    [SerializeField] private bool isRun = false;
     [SerializeField] private float bulletHitMissDistance = 25f;
-    private float bombPower;
+    private float hitMaxDist = 0.1f;
+
+
+    [SerializeField] private bool isRun = false;
+    public bool isGround;
 
     public Transform firePos;
+    public Transform FallPos;
     private Transform camTransform;
 
-    private PlayerInput input;
-    private Vector3 playerVelocity;
-    private Rigidbody rigid;
     public GameObject model;
-    public Transform FallPos;
-    public bool _isBoss = false;
-    public bool isGround;
+
+    private Animator anim;
     private RaycastHit hit;
-    float hitMaxDist = 0.1f;
+    private Rigidbody rigid;
+    private Vector3 playerVelocity;
+
+    private CharacterHP playerHP;
+
+    #endregion
+
     #region InputAction
+
+    private PlayerInput input;
     private InputAction moveAction;
     public InputAction jumpAction;
     public InputAction shootAction;
-    public InputAction aimAction;
-
-    float time = 0f;
 
     #endregion
 
-    #endregion
+    #region MONSTER
 
+    public bool _isBoss = false;
     private bool isBomb = false;
     private bool isLaser = false;
-
-    #region HP
-
-    private CharacterHP playerHP;
-    private Animator anim;
+    private float bombPower;
 
     #endregion
 
-    #region Sound
+    #region EFFECT
 
     private string gunSound = "gun";
     [SerializeField] AudioClip playerAudio;
 
     #endregion
 
-    public bool jumpactionbool;
     private void Start()
     {
         input = GetComponent<PlayerInput>();
@@ -83,40 +81,40 @@ public class PlayerController : MonoBehaviour
         anim = GetComponentInChildren<Animator>();
         rigid = GetComponent<Rigidbody>();
         camTransform = Camera.main.transform;
+
         moveAction = input.actions["Move"];
         jumpAction = input.actions["Jump"];
         shootAction = input.actions["Shoot"];
-        aimAction = input.actions["Aim"];
     }
 
     void Update()
     {
         isGround = CheckIsGround();
-        DefaultSetting();
-       
-        Jump();
+        Setting();
+
+        if (jumpAction.triggered && isGround)
+        {
+            Jump();
+        }
         AnimationStateCheck();
         GameSceneMove();
         GameSceneRotate();
+
         playerHP.HPSlide();
-        if (shootAction.triggered && aimAction.IsPressed())
+
+        if (shootAction.triggered)
         {
             SoundManager.Instance.SFXPlay(playerAudio);
             GameSceneShootGun();
         }
-
-        if (transform.position.y <= -10f)
-        {
-            Die();
+        if (transform.position.y <= -10f) {
+            Respawn();
         }
     }
 
     private void Jump()
     {
-        if (jumpAction.triggered && isGround)
-        {
-            rigid.AddForce(Vector3.up * 300f);
-        }
+        rigid.AddForce(Vector3.up * 300f);
     }
 
     public bool CheckIsGround()
@@ -131,22 +129,19 @@ public class PlayerController : MonoBehaviour
 
 
     #region Setting
-    void DefaultSetting()
+
+    void Respawn()
+    {
+        Hit(30);
+        transform.position = new Vector3(0, 0, 0);
+    }
+
+    void Setting()
     {
         model.transform.position = transform.position;
         playerSpeed = Input.GetKey(KeyCode.LeftShift) ? playerRunSpeed : playerWalkSpeed;
-
-        if (CheckIsGround() && playerVelocity.y < 0)
-        {
-            playerVelocity.y = 0f;
-        }
-
-
-        if (isBomb)
-        {
-            playerVelocity.y = bombPower;
-        }
     }
+
     #endregion
 
     #region Rotate
@@ -162,6 +157,7 @@ public class PlayerController : MonoBehaviour
     {
         Vector2 input = moveAction.ReadValue<Vector2>();
         Vector3 move = new Vector3(input.x, 0, input.y);
+        transform.rotation = Quaternion.Slerp(transform.rotation, camTransform.rotation, 0.15f);
         move = move.x * camTransform.right.normalized + move.z * camTransform.forward.normalized;
         move.y = 0;
 
@@ -193,14 +189,12 @@ public class PlayerController : MonoBehaviour
 
     private void GameSceneShootGun()
     {
-        Debug.Log("shoot");
         RaycastHit hit;
         GameObject bullet = ObjectPool.Instance.GetObject(PoolObjectType.BULLET);
         SetBullet(bullet);
         BulletController bulletController = bullet.GetComponent<BulletController>();
         if (Physics.Raycast(camTransform.position, camTransform.forward, out hit, Mathf.Infinity))
         {
-            Debug.Log(bulletController.target);
             bulletController.target = hit.point;
             bulletController.hit = true;
         }
@@ -228,11 +222,9 @@ public class PlayerController : MonoBehaviour
         Hit(damage);
     }
 
-
     #endregion
 
     #region HP
-
 
     public void Hit(int damage)
     {
@@ -247,15 +239,6 @@ public class PlayerController : MonoBehaviour
     {
             ScoreManager.Instance.SaveScore();
             UI.Instance.ChangeScene(SceneState.GAMEOVER);
-    }
-
-    #endregion
-
-    #region SET
-
-    public void SlowSpeed(bool isL)
-    {
-        isLaser = isL;
     }
 
     #endregion
@@ -280,7 +263,7 @@ public class PlayerController : MonoBehaviour
 
     void PlayerShotAnim()
     {
-        if (shootAction.triggered && aimAction.IsPressed())
+        if (shootAction.triggered)
             anim.SetTrigger("shot");
     }
 

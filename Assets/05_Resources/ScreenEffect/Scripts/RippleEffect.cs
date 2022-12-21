@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using DG.Tweening;
 
 namespace WaterRippleForScreens {
 
@@ -65,7 +66,7 @@ public class RippleEffect : MonoBehaviour {
     void Update() {
         if (detectClick) { //true -> Detect mouse left click / false -> Skip mouse click detection
 #if UNITY_EDITOR //Detect player input on editor
-            if (playerController.aimAction.IsPressed()) {
+            if (playerController.shootAction.IsPressed()) {
                 playerClickPosition = Input.mousePosition;
                 playerClick = true;
                 //Debug.Log("Mouse Pos: " + Input.mousePosition);

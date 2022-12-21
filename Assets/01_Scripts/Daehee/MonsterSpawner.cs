@@ -13,6 +13,7 @@ public class MonsterSpawner : MonoBehaviour
     private void Start()
     {
         StartSpawn();
+        spawnDelay = Random.Range(0.0f, 2.0f);
     }
 
     public void StartSpawn()
@@ -26,7 +27,7 @@ public class MonsterSpawner : MonoBehaviour
         {
             yield return new WaitForSeconds(spawnDelay);
             SetMonster();
-            spawnDelay = Random.Range(1.0f, 2.5f);
+            spawnDelay = Random.Range(1.0f, 2.0f);
         }
     }
 

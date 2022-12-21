@@ -69,16 +69,6 @@ public class FlashHit : MonoBehaviour
 
     private void ChangeColor()
     {
-
-        //Texture2D texture = new Texture2D(128, 128);
-
-        //foreach (SkinnedMeshRenderer renderer in renderers)
-        //{
-        //    colors.Add(renderer.material.mainTexture.(hashEmmision));
-        //    renderer.material.mainTexture = texture;
-        //    texture.SetPixel(128, 128, Color.red);
-        //}
-        //texture.Apply();
         foreach (SkinnedMeshRenderer renderer in renderers)
         {
             renderer.material.SetColor(hashEmmision, flashColor);
@@ -90,7 +80,6 @@ public class FlashHit : MonoBehaviour
         for (int i = 0; i < renderers.Length; i++)
         {
             renderers[i].material.SetColor(hashEmmision, Color.white);
-         //   renderers[i].material.SetColor(hashEmmision, colors[i]);
         }
     }
 }
