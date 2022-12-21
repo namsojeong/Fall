@@ -107,7 +107,7 @@ public class PlayerController : MonoBehaviour
 
         if (transform.position.y <= -10f)
         {
-            Die();
+            Respawn();
         }
     }
 
@@ -131,6 +131,12 @@ public class PlayerController : MonoBehaviour
 
 
     #region Setting
+
+    void Respawn()
+    {
+        Hit(30);
+        transform.position = new Vector3(0, 0, 0);
+    }
     void DefaultSetting()
     {
         model.transform.position = transform.position;
