@@ -52,8 +52,6 @@ public class UI : MonoSingleton<UI>
 
     public void ChangeScene(SceneState scene)
     {
-        if (scene == SceneState.VS || scene == SceneState.BOSS_GAME || scene == SceneState.BASIC_GAME) SetCursor(true);
-        else SetCursor(false);
         SceneManager.LoadScene((int)scene);
     }
 

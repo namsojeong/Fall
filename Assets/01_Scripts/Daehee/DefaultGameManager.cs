@@ -9,6 +9,7 @@ public class DefaultGameManager : MonoBehaviour
     private void Awake()
     {
         gameTimeManager = GetComponent<GameTimeManager>();
+        UI.Instance.SetCursor(true);
     }
     private void Start()
     {

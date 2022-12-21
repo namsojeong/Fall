@@ -45,7 +45,6 @@ public class ScoreManager : MonoBehaviour
     public void AddScore(int addScore)
     {
         score += addScore;
-        Debug.Log(score);
         if(score > bestScore)
         {
             bestScore = score;

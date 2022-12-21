@@ -8,7 +8,6 @@ using UnityEngine.AI;
 
 public class BombMonster : MonoBehaviour
 {
-
     public enum States
     {
         Idle,
@@ -33,15 +32,14 @@ public class BombMonster : MonoBehaviour
     public LayerMask targetLayerMask;
     public LayerMask blockLayerMask;
 
+    // 미리 변수로 값 저장해두기
+    private int attackPower = 20;
     private float moveSpeed = 5.0f;
     private float moveRange = 50.0f;
     private float attackRange = 5.0f;
     private float colRadius = 100f;
-    private int attackPower = 20;
     private float bombPower = 1000.0f;
     private float bombDistance = 20.0f;
-
-    private FlashHit hitFlash;
 
     private void Awake()
     {
@@ -49,7 +47,6 @@ public class BombMonster : MonoBehaviour
         rigid = GetComponent<Rigidbody>();
         anim = GetComponent<Animator>();
         collider = GetComponent<Collider>();
-        hitFlash = GetComponent<FlashHit>();
         audio = GetComponent<AudioSource>();
 
         target = SearchTarget();
@@ -130,10 +127,6 @@ public class BombMonster : MonoBehaviour
     #endregion
 
     #region IDLE
-    private void Idle_Enter()
-    {
-
-    }
         
     private void CheckDistanceIdle()
     {
@@ -158,11 +151,11 @@ public class BombMonster : MonoBehaviour
 
     private void SetMove(bool isMove)
     {
-            agent.isStopped = !isMove;
+         agent.isStopped = !isMove;
     }
     private void Move()
     {
-        if (target == null) return;
+        if (target.Equals(null)) return;
         LookTarget(target);
         agent.SetDestination(target.position);
     }
@@ -200,7 +193,7 @@ public class BombMonster : MonoBehaviour
     
     private void OnCollisionEnter(Collision collision)
     {
-        if(collision.collider.tag=="Bullet")
+        if(collision.collider.CompareTag("Bullet"))
         {
             fsm.ChangeState(States.Hit);
         }
@@ -208,7 +201,7 @@ public class BombMonster : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.tag == "Bullet")
+        if (other.CompareTag("Bullet"))
         {
             fsm.ChangeState(States.Hit);
         }
@@ -255,7 +248,6 @@ public class BombMonster : MonoBehaviour
     private void Hit_Enter()
     {
         AnimationPlay(hashHit, true);
-        hitFlash.DamageEffect();
         Bomb();
     }
 

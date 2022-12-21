@@ -15,6 +15,8 @@ public class GameOverManager : MonoBehaviour
 
     private void Awake()
     {
+        UI.Instance.SetCursor(false);
+
         startButton.onClick.AddListener(() =>
         {
             SoundManager.Instance.ClickPlay(click);

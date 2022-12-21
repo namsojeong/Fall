@@ -19,7 +19,6 @@ public class PlayerDefaultController : MonoBehaviour
     private Vector3 playerVelocity;
 
     private float hitMaxDist = 0.1f;
-    private float bombPower;
     private float radLook;
     private float angle;
 
@@ -81,13 +80,17 @@ public class PlayerDefaultController : MonoBehaviour
     {
         model.transform.position = transform.position;
         PlayerRotate();
-        Jump();
+
+        if (jumpAction.triggered && CheckIsGround())
+        {
+            Jump();
+        }
         Move();
 
         CheckGround();
         PlayerMoveAnim();
         PlayerJumpAnim();
-        PlayerShotAnim();
+        //PlayerShotAnim();
 
         if(transform.position.y <= -10f)
         {
@@ -118,10 +121,8 @@ public class PlayerDefaultController : MonoBehaviour
 
  private void Jump()
     {
-        if (jumpAction.triggered && CheckIsGround())
-        {
+       
             rigid.AddForce(Vector3.up * 300f);
-        }
     }
 
     private void Move()
@@ -162,40 +163,6 @@ public class PlayerDefaultController : MonoBehaviour
             walk.Play();
 
         }
-    }
-    #endregion
-
-    #region Shoot
-
-    private void Shoot()
-    {
-        SoundManager.Instance.SFXPlay(playerAudio);
-        RaycastHit hit;
-
-        GameObject bullet = ObjectPool.Instance.GetObject(PoolObjectType.BULLET);
-        SetBullet(bullet);
-
-        BulletController bulletController = bullet.GetComponent<BulletController>();
-        Vector3 playerpos = Camera.main.WorldToScreenPoint(transform.position);
-        Vector3 mousepos = Camera.main.WorldToScreenPoint(Input.mousePosition);
-        if (Physics.Raycast(transform.position + Vector3.up, mousepos - playerpos, out hit, Mathf.Infinity))
-        {
-            bulletController.target = hit.point;
-            bulletController.hit = true;
-        }
-        else
-        {
-            bulletController.target = transform.position + transform.forward * 1000;
-            bulletController.hit = false;
-        }
-
-    }
-
-    private void SetBullet(GameObject bullet)
-    {
-        bullet.transform.position = firePos.transform.position;
-        bullet.transform.parent = null;
-        bullet.transform.rotation = firePos.rotation;
     }
 
     #endregion
@@ -241,7 +208,7 @@ public class PlayerDefaultController : MonoBehaviour
     #region Collision
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.collider.tag == "Gate")
+        if (collision.collider.CompareTag("Gate"))
         {
             StartCoroutine(DoorDelay());
         }
