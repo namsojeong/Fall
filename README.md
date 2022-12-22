@@ -1,6 +1,10 @@
 # 💣 DDoRR PunG 또르르펑
+
 ![image](https://user-images.githubusercontent.com/77655325/209038334-6deb0955-9eed-48a9-bf42-3c9236b342f8.png)
 *이 프로젝트는 경기게임마이스터고등학교 2022 엔진 응용 과목 팀프로젝트입니다.*
+
+*유니티 에셋스토어에서 리소스를 가져왔습니다.*
+https://assetstore.unity.com/packages/3d/characters/jammo-character-mix-and-jam-158456
 
 
 ## ☝️ 게임 간단 설명
