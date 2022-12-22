@@ -73,18 +73,18 @@ public class RippleEffect : MonoBehaviour {
             }
 
 #elif UNITY_ANDROID || UNITY_IOS || UNITY_TIZEN || UNITY_WP_8_1 //Detect player input for mobiles
-            if (Input.touchCount > 0) {
+             if (playerController.shootAction.IsPressed()) {
                 playerClickPosition = Input.GetTouch(0).position;
                 playerClick = true;
             }
 #else                                                         //Detect player input from mouse
-            if (Input.GetMouseButtonDown(0)) {
+             if (playerController.shootAction.IsPressed()) {
                 playerClickPosition = Input.mousePosition;
                 playerClick = true;
                 //Debug.Log("Mouse Pos: " + Input.mousePosition);
             }
 #endif
-            if (playerClick) { //Check if player did click
+                if (playerClick) { //Check if player did click
                 playerClick = false; //Reset player click
 
                 //Set new ID

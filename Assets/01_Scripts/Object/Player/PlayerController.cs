@@ -139,6 +139,7 @@ public class PlayerController : MonoBehaviour
     void Setting()
     {
         model.transform.position = transform.position;
+        model.transform.localRotation = Quaternion.identity;
         playerSpeed = Input.GetKey(KeyCode.LeftShift) ? playerRunSpeed : playerWalkSpeed;
     }
 
